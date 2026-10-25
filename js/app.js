@@ -112,7 +112,19 @@ function flipAllCoins() {
 
     setTimeout(() => {
         balance += totalEarned;
-        addHistory(`Roll ${totalRolls}: ${headsCount} Heads (+$${totalEarned.toFixed(2)})`);
+        
+        // FIXED HISTORY LOGIC: Will now accurately state Heads or Tails
+        if (coins.length === 1) {
+            if (headsCount === 1) {
+                addHistory(`Roll ${totalRolls}: Heads (+$${totalEarned.toFixed(2)})`);
+            } else {
+                addHistory(`Roll ${totalRolls}: Tails ($0.00)`);
+            }
+        } else {
+            const tailsCount = coins.length - headsCount;
+            addHistory(`Roll ${totalRolls}: ${headsCount} Heads, ${tailsCount} Tails (+$${totalEarned.toFixed(2)})`);
+        }
+
         btn.style.opacity = '1';
         btn.innerText = 'FLIP';
         isFlipping = false;
