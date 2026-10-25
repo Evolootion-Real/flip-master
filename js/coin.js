@@ -20,6 +20,12 @@ export function renderCoins(coins, selectedCoinIndex, selectCoinCallback) {
         const val = valueTiers[coinData.valueIdx];
         const images = getCoinImages(val);
         
+        // Add fallback metallic colors just in case the browser blocks the images
+        let fallbackBg = '#b87333'; // Copper
+        let fallbackText = '#5c3a21';
+        if (val >= 1.00) { fallbackBg = '#daa520'; fallbackText = '#553a00'; } // Gold
+        else if (val >= 0.05) { fallbackBg = '#c0c0c0'; fallbackText = '#333333'; } // Silver
+        
         // Adjust size based on value
         let size = 100;
         if(val == 0.10) size = 85;
@@ -33,8 +39,8 @@ export function renderCoins(coins, selectedCoinIndex, selectCoinCallback) {
         
         wrapper.innerHTML = `
             <div class="coin" id="coin-${index}" style="width:${size}px; height:${size}px; transform: rotateX(${coinData.rotation}deg)">
-                <div class="coin-face" style="background-image: url('${images.f}')"></div>
-                <div class="coin-face coin-back" style="background-image: url('${images.b}')"></div>
+                <div class="coin-face" style="background-color: ${fallbackBg}; background-image: url('${images.f}'); color: ${fallbackText}; display: flex; align-items: center; justify-content: center; font-size: ${size/2.5}px; font-weight: 900;">H</div>
+                <div class="coin-face coin-back" style="background-color: ${fallbackBg}; background-image: url('${images.b}'); color: ${fallbackText}; display: flex; align-items: center; justify-content: center; font-size: ${size/2.5}px; font-weight: 900;">T</div>
             </div>
         `;
         table.appendChild(wrapper);
