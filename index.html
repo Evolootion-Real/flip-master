@@ -8,18 +8,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
 
         :root {
-            --theme: #8a2be2; /* Default Purple */
+            --theme: #8a2be2;
         }
 
         body {
             margin: 0;
             overflow: hidden;
-            background: #050505;
+            background-color: #050505;
             color: white;
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* Room and LED Walls */
+        /* Room with Subtle Geometric Personality */
         .room {
             position: relative;
             width: 100vw;
@@ -27,7 +27,10 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            background-image: 
+                radial-gradient(circle at 50% 30%, rgba(255,255,255,0.03) 0%, transparent 70%),
+                repeating-linear-gradient(45deg, #0a0a0a 0, #0a0a0a 2px, transparent 2px, transparent 15px),
+                repeating-linear-gradient(-45deg, #0a0a0a 0, #0a0a0a 2px, transparent 2px, transparent 15px);
         }
 
         .led-top, .led-left, .led-right {
@@ -41,17 +44,17 @@
         .led-left { top: 0; left: 0; width: 8px; height: 100%; }
         .led-right { top: 0; right: 0; width: 8px; height: 100%; }
 
-        /* Table */
         .table {
             width: 100%;
             height: 35%;
-            background: linear-gradient(to top, #050505, #151515);
+            background: linear-gradient(to top, #020202, #111111);
             border-top: 2px solid #222;
             position: relative;
             z-index: 1;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
         }
 
-        /* 3D Coin */
+        /* Hyper-Realistic 3D Coin */
         .coin-container {
             position: absolute;
             left: 20%;
@@ -61,8 +64,8 @@
         }
 
         .coin {
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             position: relative;
             transform-style: preserve-3d;
             transform: rotateX(0deg);
@@ -74,29 +77,48 @@
             height: 100%;
             backface-visibility: hidden;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #d4a373, #b07d47, #8b5a2b);
-            border: 4px solid #5c3a21;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 50px;
-            color: #3b220c;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.3), -1px -1px 2px rgba(0,0,0,0.5);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 15px 25px rgba(0,0,0,0.9);
+            font-size: 55px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.7), inset 0 0 5px rgba(255,255,255,0.4), 0 15px 25px rgba(0,0,0,0.9);
+            transition: background 0.3s, border 0.3s, color 0.3s;
         }
 
         .coin-back {
             transform: rotateX(180deg);
         }
 
+        /* Coin Materials */
+        .coin-copper {
+            background: linear-gradient(135deg, #ffb380 0%, #b87333 40%, #703612 100%);
+            border: 4px solid #8b4513;
+            color: #3e1f04;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.3), -1px -1px 2px rgba(0,0,0,0.5);
+        }
+
+        .coin-silver {
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 40%, #696969 100%);
+            border: 4px solid #808080;
+            color: #333333;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8), -1px -1px 2px rgba(0,0,0,0.5);
+        }
+
+        .coin-gold {
+            background: linear-gradient(135deg, #ffe55c 0%, #daa520 40%, #8b6508 100%);
+            border: 4px solid #b8860b;
+            color: #553a00;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.6), -1px -1px 2px rgba(0,0,0,0.5);
+        }
+
         @keyframes flipAir {
             0% { transform: translateY(0) rotateX(0deg); }
-            50% { transform: translateY(-300px) rotateX(900deg); }
+            50% { transform: translateY(-350px) rotateX(900deg); }
             100% { transform: translateY(0) rotateX(1800deg); }
         }
 
-        /* FLIP Button */
+        /* UI Elements */
         .btn-wrapper {
             position: absolute;
             bottom: 40px;
@@ -126,7 +148,7 @@
             content: '';
             position: absolute;
             inset: 5px;
-            background: #111;
+            background: #0a0a0a;
             border-radius: 8px;
         }
 
@@ -149,14 +171,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Sidebar Layout */
         .sidebar {
             position: absolute;
             right: 0;
             top: 0;
             width: 380px;
             height: 100%;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(8, 8, 8, 0.98);
             border-left: 3px solid var(--theme);
             display: flex;
             flex-direction: column;
@@ -169,7 +190,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #333;
+            border-bottom: 2px solid #222;
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
@@ -195,7 +216,7 @@
         }
 
         .upgrade-btn {
-            background: #1a1a1a;
+            background: #151515;
             color: white;
             border: 2px solid var(--theme);
             padding: 15px;
@@ -207,10 +228,7 @@
             transition: 0.2s;
         }
 
-        .upgrade-btn:hover {
-            background: var(--theme);
-            color: #fff;
-        }
+        .upgrade-btn:hover { background: var(--theme); color: #fff; }
 
         .history-container {
             flex: 1;
@@ -229,16 +247,16 @@
             flex-grow: 1;
             overflow-y: auto;
             font-size: 16px;
-            color: #ddd;
-            background: #0a0a0a;
+            color: #ccc;
+            background: #080808;
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #333;
+            border: 1px solid #222;
         }
 
         .history-item {
             padding: 8px 0;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid #1a1a1a;
         }
 
         /* Settings Modal */
@@ -253,60 +271,44 @@
         .settings-modal {
             display: none;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
             z-index: 20;
             flex-direction: column;
             padding: 50px;
             box-sizing: border-box;
         }
 
-        .settings-modal.open {
-            display: flex;
-        }
+        .settings-modal.open { display: flex; }
 
-        .settings-modal h1 {
-            color: var(--theme);
-        }
+        .settings-modal h1 { color: var(--theme); }
 
         .info-box {
-            background: #111;
-            padding: 20px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            font-size: 18px;
-            line-height: 1.6;
+            background: #111; padding: 20px; border: 1px solid #333;
+            border-radius: 8px; margin-bottom: 30px; font-size: 18px; line-height: 1.6;
         }
 
         .color-grid {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 10px;
+            display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 30px;
         }
 
         .color-swatch {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid #fff;
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; border: 2px solid #fff;
+        }
+
+        .danger-zone {
+            margin-top: 20px; padding: 20px; border: 1px solid #ff4444; border-radius: 8px;
+        }
+
+        .reset-btn {
+            background: #ff4444; color: white; border: none; padding: 12px 20px;
+            font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px;
         }
 
         .close-settings {
-            margin-top: auto;
-            background: var(--theme);
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 8px;
+            margin-top: auto; background: var(--theme); color: white; border: none;
+            padding: 15px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 8px;
         }
     </style>
 </head>
@@ -347,8 +349,8 @@
         <div class="table">
             <div class="coin-container">
                 <div class="coin" id="coin">
-                    <div class="coin-face">H</div>
-                    <div class="coin-face coin-back">T</div>
+                    <div class="coin-face coin-copper" id="faceFront">H</div>
+                    <div class="coin-face coin-back coin-copper" id="faceBack">T</div>
                 </div>
             </div>
         </div>
@@ -361,23 +363,26 @@
             <h1>Settings & Info</h1>
             
             <div class="info-box">
-                <strong>Game Goal:</strong> The objective is to accumulate $1,000,000 by flipping a coin. 
-                Heads generates money based on your current coin value. Tails has no value. 
-                Upgrade your mechanics to reach the goal faster.
+                <strong>Game Goal:</strong> Accumulate $1,000,000 by flipping. Heads generates money. Tails has no value. 
             </div>
 
             <h2>Theme Color</h2>
             <div class="color-grid">
-                <div class="color-swatch" style="background: #8a2be2;" onclick="setTheme('#8a2be2')"></div> <!-- Purple -->
-                <div class="color-swatch" style="background: #008B8B;" onclick="setTheme('#008B8B')"></div> <!-- Dark Cyan Blue -->
-                <div class="color-swatch" style="background: #e63946;" onclick="setTheme('#e63946')"></div> <!-- Red -->
-                <div class="color-swatch" style="background: #4361ee;" onclick="setTheme('#4361ee')"></div> <!-- Blue -->
-                <div class="color-swatch" style="background: #2a9d8f;" onclick="setTheme('#2a9d8f')"></div> <!-- Green -->
-                <div class="color-swatch" style="background: #e9c46a;" onclick="setTheme('#e9c46a')"></div> <!-- Yellow -->
-                <div class="color-swatch" style="background: #f4a261;" onclick="setTheme('#f4a261')"></div> <!-- Orange -->
-                <div class="color-swatch" style="background: #ff006e;" onclick="setTheme('#ff006e')"></div> <!-- Pink -->
-                <div class="color-swatch" style="background: #aacc00;" onclick="setTheme('#aacc00')"></div> <!-- Lime -->
-                <div class="color-swatch" style="background: #ffffff;" onclick="setTheme('#ffffff')"></div> <!-- White -->
+                <div class="color-swatch" style="background: #8a2be2;" onclick="setTheme('#8a2be2')"></div>
+                <div class="color-swatch" style="background: #008B8B;" onclick="setTheme('#008B8B')"></div>
+                <div class="color-swatch" style="background: #e63946;" onclick="setTheme('#e63946')"></div>
+                <div class="color-swatch" style="background: #4361ee;" onclick="setTheme('#4361ee')"></div>
+                <div class="color-swatch" style="background: #2a9d8f;" onclick="setTheme('#2a9d8f')"></div>
+                <div class="color-swatch" style="background: #e9c46a;" onclick="setTheme('#e9c46a')"></div>
+                <div class="color-swatch" style="background: #f4a261;" onclick="setTheme('#f4a261')"></div>
+                <div class="color-swatch" style="background: #ff006e;" onclick="setTheme('#ff006e')"></div>
+                <div class="color-swatch" style="background: #aacc00;" onclick="setTheme('#aacc00')"></div>
+                <div class="color-swatch" style="background: #ffffff;" onclick="setTheme('#ffffff')"></div>
+            </div>
+
+            <div class="danger-zone">
+                <h2 style="color: #ff4444; margin-top: 0;">Danger Zone</h2>
+                <button class="reset-btn" onclick="resetProgress()">Reset All Progress</button>
             </div>
 
             <button class="close-settings" onclick="toggleSettings()">Close Settings</button>
@@ -406,6 +411,39 @@
             document.getElementById('settingsModal').classList.toggle('open');
         }
 
+        function resetProgress() {
+            if(confirm("Are you sure you want to reset ALL progress? This cannot be undone.")) {
+                balance = 0;
+                totalRolls = 0;
+                currentChanceIndex = 0;
+                currentValueIndex = 0;
+                currentTimeIndex = 0;
+                history = [];
+                updateUI();
+                toggleSettings();
+            }
+        }
+
+        function updateCoinMaterial() {
+            const val = valueTiers[currentValueIndex];
+            const faceFront = document.getElementById('faceFront');
+            const faceBack = document.getElementById('faceBack');
+            
+            faceFront.className = "coin-face";
+            faceBack.className = "coin-face coin-back";
+
+            if (val >= 1.00) {
+                faceFront.classList.add('coin-gold');
+                faceBack.classList.add('coin-gold');
+            } else if (val >= 0.05) {
+                faceFront.classList.add('coin-silver');
+                faceBack.classList.add('coin-silver');
+            } else {
+                faceFront.classList.add('coin-copper');
+                faceBack.classList.add('coin-copper');
+            }
+        }
+
         function updateUI() {
             document.getElementById('balance').innerText = balance.toFixed(2);
             document.getElementById('totalRolls').innerText = totalRolls;
@@ -413,6 +451,8 @@
             document.getElementById('valueDisplay').innerText = valueTiers[currentValueIndex].toFixed(2);
             document.getElementById('timeDisplay').innerText = timeTiers[currentTimeIndex].toFixed(1);
             
+            updateCoinMaterial();
+
             const historyContainer = document.getElementById('historyList');
             historyContainer.innerHTML = '';
             history.forEach(item => {
@@ -425,7 +465,7 @@
 
         function addHistory(text) {
             history.unshift(text);
-            if (history.length > 20) {
+            if (history.length > 10) {
                 history.pop();
             }
             updateUI();
@@ -439,17 +479,14 @@
             const btn = document.getElementById('flipBtn');
             const currentFlipTime = timeTiers[currentTimeIndex] * 1000;
             
-            // Start 3D air animation
             coin.style.animation = `flipAir ${currentFlipTime}ms ease-in-out`;
             btn.style.opacity = '0.5';
             btn.innerText = '...';
 
             setTimeout(() => {
-                // Determine Result
                 const chance = chanceTiers[currentChanceIndex] / 100;
                 const isHeads = Math.random() < chance;
                 
-                // Stop CSS animation and apply final physical rotation
                 coin.style.animation = 'none';
                 coin.style.transform = isHeads ? 'rotateX(0deg)' : 'rotateX(180deg)';
                 
