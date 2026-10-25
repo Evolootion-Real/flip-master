@@ -27,7 +27,6 @@ body {
     background: radial-gradient(circle at 50% 20%, #1a1a2e 0%, #020203 90%);
 }
 
-/* New Wall Texture */
 .room::before {
     content: '';
     position: absolute;
@@ -37,14 +36,14 @@ body {
         linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     background-size: 60px 60px;
     background-position: center center;
-    box-shadow: inset 0 0 100px 100px #020203; /* Fades the grid at the edges */
+    box-shadow: inset 0 0 100px 100px #020203; 
     z-index: 0;
 }
 
-/* Neon Lights (White core, Theme-colored glow) */
+/* Neon Lights */
 .led-top, .led-left, .led-right {
     position: absolute;
-    background: #ffffff; /* White neon core */
+    background: #ffffff; 
     box-shadow: 0 0 10px var(--theme), 0 0 20px var(--theme), 0 0 40px var(--theme), 0 0 80px var(--theme);
     z-index: 1;
     transition: 0.5s;
@@ -54,13 +53,12 @@ body {
 .led-left { top: 0; left: 0; width: 4px; height: 100%; }
 .led-right { top: 0; right: 0; width: 3px; height: 100%; }
 
-/* Next Gen Table with Neon Horizon */
+/* Next Gen Table */
 .table {
     width: 100%;
     height: 38%;
     background: rgba(8, 8, 12, 0.9);
     backdrop-filter: blur(15px);
-    /* Neon Horizon Line */
     border-top: 3px solid #ffffff; 
     box-shadow: 0 -5px 15px var(--theme), 0 -10px 30px var(--theme), inset 0 15px 30px rgba(0,0,0,0.8);
     position: relative;
@@ -74,13 +72,14 @@ body {
     padding-right: 400px; 
 }
 
-/* Coin Mechanics */
+/* Hyper-Realistic Coin Mechanics */
 .coin-wrapper {
-    perspective: 1000px;
+    perspective: 1500px; /* Deeper perspective for 3D realism */
     z-index: 5;
     cursor: pointer;
     padding: 15px;
     border-radius: 50%;
+    position: relative;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -94,12 +93,33 @@ body {
     transform: translateY(-15px) scale(1.05);
 }
 
+/* Dynamic Drop Shadow */
+.coin-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
+}
+
 .coin {
-    width: 100px;
-    height: 100px;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateX(0deg);
+    z-index: 5;
+}
+
+/* 3D Thickness Slices */
+.coin-edge {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.3); /* Dark edges for shadow */
+    backface-visibility: hidden;
 }
 
 .coin-face {
@@ -110,12 +130,26 @@ body {
     border-radius: 50%;
     background-size: cover;
     background-position: center;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 20px 30px rgba(0,0,0,0.9);
-    border: 2px solid #333;
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5); /* Ambient edge shading */
+    border: 1px solid rgba(255,255,255,0.15);
 }
 
-.coin-back {
-    transform: rotateX(180deg);
+/* The Animated Shine Effect */
+.shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(115deg, 
+        transparent 0%, 
+        transparent 30%, 
+        rgba(255, 255, 255, 0.5) 45%, 
+        rgba(255, 255, 255, 0.8) 50%, 
+        rgba(255, 255, 255, 0.5) 55%, 
+        transparent 70%, 
+        transparent 100%);
+    background-size: 250% 250%;
+    mix-blend-mode: overlay;
+    opacity: 0.8;
 }
 
 /* Next Gen Glassmorphism Sidebar */
@@ -224,9 +258,7 @@ body {
     border-color: var(--theme);
 }
 
-.upgrade-btn:active, .add-coin-btn:active {
-    transform: translateY(1px);
-}
+.upgrade-btn:active, .add-coin-btn:active { transform: translateY(1px); }
 
 /* History */
 .history-container {
@@ -282,9 +314,7 @@ body {
     transition: transform 0.2s;
 }
 
-.btn-wrapper:active {
-    transform: translateX(-50%) scale(0.95);
-}
+.btn-wrapper:active { transform: translateX(-50%) scale(0.95); }
 
 .btn-wrapper::before {
     content: '';
@@ -355,9 +385,7 @@ body {
 
 .settings-modal h1 { color: #fff; font-weight: 900; font-size: 42px; margin-top: 0; }
 
-.color-grid {
-    display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; margin-bottom: 40px;
-}
+.color-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; margin-bottom: 40px; }
 
 .color-swatch {
     width: 50px; height: 50px; border-radius: 15px;
