@@ -1,70 +1,64 @@
-// Handles 3D coin mechanics, custom AI-styled SVG faces, and 3D layering
+// Handles 3D coin mechanics, bold minted H/T typography, and 3D layering
 
 import { valueTiers } from './upgrades.js';
 
-// Custom SVG generator for Heads and Tails (Replaces Wikimedia images)
+// Custom SVG generator for Heads ("H") and Tails ("T")
 export function getCoinDesigns() {
-    // Carved Crown & Gear emblem with CSS-friendly translucent shading for deep embossing
+    // Slick minted "H" with an engraved/embossed inset look
     const headsSVG = `
         <svg viewBox="0 0 100 100" class="coin-svg" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <path id="heads-text-arc" d="M 15 50 A 35 35 0 1 1 85 50" fill="transparent"/>
-                <filter id="inset-shadow">
-                    <feOffset dx="0" dy="1"/>
-                    <feGaussianBlur stdDeviation="0.5" result="offset-blur"/>
+                <filter id="inset-shadow-h">
+                    <feOffset dx="0" dy="1.5"/>
+                    <feGaussianBlur stdDeviation="0.7" result="offset-blur"/>
                     <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
-                    <feFlood flood-color="black" flood-opacity="0.7" result="color"/>
+                    <feFlood flood-color="black" flood-opacity="0.85" result="color"/>
                     <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
                     <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
                 </filter>
             </defs>
-            <!-- Outer Gear Rim -->
-            <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1.5" stroke-dasharray="4 2"/>
-            <circle cx="50" cy="50" r="43" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <!-- Minted Inner Ring -->
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
             
-            <!-- Raised Text -->
-            <text font-size="9" font-family="Montserrat" font-weight="900" fill="rgba(0,0,0,0.75)" filter="url(#inset-shadow)">
-                <textPath href="#heads-text-arc" startOffset="50%" text-anchor="middle">CJ COIN APP</textPath>
-            </text>
-            
-            <!-- 3D Fantasy Crown -->
-            <path d="M 28 65 L 35 35 L 50 50 L 65 35 L 72 65 Z" fill="rgba(0,0,0,0.15)" stroke="rgba(0,0,0,0.7)" stroke-width="1.5" filter="url(#inset-shadow)"/>
-            <path d="M 28 65 L 35 35 L 50 50 L 65 35 L 72 65 Z" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" transform="translate(0, -1)"/>
-            
-            <!-- Base Jewels -->
-            <circle cx="35" cy="60" r="2" fill="rgba(0,0,0,0.6)"/>
-            <circle cx="50" cy="60" r="2.5" fill="rgba(0,0,0,0.6)"/>
-            <circle cx="65" cy="60" r="2" fill="rgba(0,0,0,0.6)"/>
+            <!-- Bold & Slick "H" Typography -->
+            <text x="50" y="68" 
+                  font-size="54" 
+                  font-family="'Montserrat', sans-serif" 
+                  font-weight="900" 
+                  text-anchor="middle" 
+                  fill="rgba(0,0,0,0.8)" 
+                  filter="url(#inset-shadow-h)"
+                  letter-spacing="2">H</text>
         </svg>
     `;
 
-    // Geometric Star & Vault design
+    // Slick minted "T" with an engraved/embossed inset look
     const tailsSVG = `
         <svg viewBox="0 0 100 100" class="coin-svg" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <path id="tails-text-arc" d="M 85 50 A 35 35 0 1 1 15 50" fill="transparent"/>
-                <filter id="inset-shadow-tails">
-                    <feOffset dx="0" dy="1"/>
-                    <feGaussianBlur stdDeviation="0.5" result="offset-blur"/>
+                <filter id="inset-shadow-t">
+                    <feOffset dx="0" dy="1.5"/>
+                    <feGaussianBlur stdDeviation="0.7" result="offset-blur"/>
                     <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
-                    <feFlood flood-color="black" flood-opacity="0.7" result="color"/>
+                    <feFlood flood-color="black" flood-opacity="0.85" result="color"/>
                     <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
                     <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
                 </filter>
             </defs>
-            <!-- Geometric Border -->
-            <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="1.5"/>
-            <circle cx="50" cy="50" r="43" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+            <!-- Minted Inner Ring -->
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
             
-            <!-- Raised Text -->
-            <text font-size="9" font-family="Montserrat" font-weight="900" fill="rgba(0,0,0,0.75)" filter="url(#inset-shadow-tails)">
-                <textPath href="#tails-text-arc" startOffset="50%" text-anchor="middle">FLIP TO WIN</textPath>
-            </text>
-            
-            <!-- Interlocking Star/Vault -->
-            <polygon points="50,25 58,42 75,42 62,52 66,68 50,58 34,68 38,52 25,42 42,42" fill="rgba(0,0,0,0.15)" stroke="rgba(0,0,0,0.7)" stroke-width="1.5" filter="url(#inset-shadow-tails)"/>
-            <circle cx="50" cy="50" r="8" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-            <circle cx="50" cy="50" r="4" fill="rgba(0,0,0,0.6)"/>
+            <!-- Bold & Slick "T" Typography -->
+            <text x="50" y="68" 
+                  font-size="54" 
+                  font-family="'Montserrat', sans-serif" 
+                  font-weight="900" 
+                  text-anchor="middle" 
+                  fill="rgba(0,0,0,0.8)" 
+                  filter="url(#inset-shadow-t)"
+                  letter-spacing="2">T</text>
         </svg>
     `;
 
