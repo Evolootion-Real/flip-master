@@ -9,6 +9,7 @@
 
         :root {
             --theme: #8a2be2;
+            --theme-text: #ffffff;
         }
 
         body {
@@ -19,7 +20,7 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* Room with Subtle Geometric Personality */
+        /* Room */
         .room {
             position: relative;
             width: 100vw;
@@ -54,7 +55,7 @@
             box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
         }
 
-        /* Hyper-Realistic 3D Coin */
+        /* Coin Mechanics */
         .coin-container {
             position: absolute;
             left: 20%;
@@ -80,8 +81,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            font-size: 55px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.7), inset 0 0 5px rgba(255,255,255,0.4), 0 15px 25px rgba(0,0,0,0.9);
             transition: background 0.3s, border 0.3s, color 0.3s;
         }
@@ -90,32 +89,33 @@
             transform: rotateX(180deg);
         }
 
-        /* Coin Materials */
+        /* Material Colors */
         .coin-copper {
             background: linear-gradient(135deg, #ffb380 0%, #b87333 40%, #703612 100%);
             border: 4px solid #8b4513;
             color: #3e1f04;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.3), -1px -1px 2px rgba(0,0,0,0.5);
         }
 
         .coin-silver {
             background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 40%, #696969 100%);
             border: 4px solid #808080;
             color: #333333;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8), -1px -1px 2px rgba(0,0,0,0.5);
         }
 
         .coin-gold {
             background: linear-gradient(135deg, #ffe55c 0%, #daa520 40%, #8b6508 100%);
             border: 4px solid #b8860b;
             color: #553a00;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.6), -1px -1px 2px rgba(0,0,0,0.5);
         }
 
-        @keyframes flipAir {
-            0% { transform: translateY(0) rotateX(0deg); }
-            50% { transform: translateY(-350px) rotateX(900deg); }
-            100% { transform: translateY(0) rotateX(1800deg); }
+        /* SVG Indentation Effect */
+        .coin-svg {
+            width: 85%;
+            height: 85%;
+            position: absolute;
+            top: 7.5%;
+            left: 7.5%;
+            filter: drop-shadow(-1px -1px 1px rgba(0,0,0,0.6)) drop-shadow(1px 1px 1px rgba(255,255,255,0.3));
         }
 
         /* UI Elements */
@@ -307,7 +307,7 @@
         }
 
         .close-settings {
-            margin-top: auto; background: var(--theme); color: white; border: none;
+            margin-top: auto; background: var(--theme); color: var(--theme-text); border: none;
             padding: 15px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 8px;
         }
     </style>
@@ -349,8 +349,39 @@
         <div class="table">
             <div class="coin-container">
                 <div class="coin" id="coin">
-                    <div class="coin-face coin-copper" id="faceFront">H</div>
-                    <div class="coin-face coin-back coin-copper" id="faceBack">T</div>
+                    <!-- HEADS (Lincoln) -->
+                    <div class="coin-face coin-copper" id="faceFront">
+                        <svg viewBox="0 0 100 100" class="coin-svg">
+                            <path id="arc-top" d="M 15,35 A 40,40 0 0,1 85,35" fill="none" />
+                            <text font-size="8" font-family="Montserrat" font-weight="900" fill="currentColor">
+                                <textPath href="#arc-top" startOffset="50%" text-anchor="middle">IN GOD WE TRUST</textPath>
+                            </text>
+                            <path d="M 45,20 C 55,20 60,30 60,40 C 60,50 65,65 75,75 L 30,75 C 35,65 40,55 40,45 C 40,35 35,25 45,20 Z" fill="currentColor" />
+                            <text x="15" y="60" font-size="6" font-family="Montserrat" font-weight="bold" fill="currentColor">LIBERTY</text>
+                            <text x="70" y="65" font-size="8" font-family="Montserrat" font-weight="bold" fill="currentColor">2026</text>
+                        </svg>
+                    </div>
+                    
+                    <!-- TAILS (Memorial) -->
+                    <div class="coin-face coin-back coin-copper" id="faceBack">
+                        <svg viewBox="0 0 100 100" class="coin-svg">
+                            <path id="arc-back" d="M 15,30 A 40,40 0 0,1 85,30" fill="none" />
+                            <text font-size="8" font-family="Montserrat" font-weight="900" fill="currentColor">
+                                <textPath href="#arc-back" startOffset="50%" text-anchor="middle">UNITED STATES OF AMERICA</textPath>
+                            </text>
+                            <path id="arc-bot" d="M 85,70 A 40,40 0 0,1 15,70" fill="none" />
+                            <text font-size="10" font-family="Montserrat" font-weight="900" fill="currentColor">
+                                <textPath href="#arc-bot" startOffset="50%" text-anchor="middle">ONE CENT</textPath>
+                            </text>
+                            <rect x="30" y="40" width="40" height="20" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <line x1="35" y1="40" x2="35" y2="60" stroke="currentColor" stroke-width="2"/>
+                            <line x1="42.5" y1="40" x2="42.5" y2="60" stroke="currentColor" stroke-width="2"/>
+                            <line x1="50" y1="40" x2="50" y2="60" stroke="currentColor" stroke-width="2"/>
+                            <line x1="57.5" y1="40" x2="57.5" y2="60" stroke="currentColor" stroke-width="2"/>
+                            <line x1="65" y1="40" x2="65" y2="60" stroke="currentColor" stroke-width="2"/>
+                            <text x="50" y="37" font-size="4" font-weight="bold" font-family="Montserrat" text-anchor="middle" fill="currentColor">E PLURIBUS UNUM</text>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -394,6 +425,7 @@
         let totalRolls = 0;
         let isFlipping = false;
         let history = [];
+        let currentRotation = 0;
 
         const chanceTiers = [10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 32.5, 35.0, 37.5, 40.0, 42.5, 45.0, 47.5, 50.0, 52.5, 55.0, 57.5, 60.0, 62.5, 65.0, 67.5, 70.0, 72.5, 75.0];
         const valueTiers = [0.01, 0.05, 0.10, 0.25, 0.50, 1, 2, 5, 10, 20, 50, 100];
@@ -405,6 +437,13 @@
 
         function setTheme(color) {
             document.documentElement.style.setProperty('--theme', color);
+            
+            // Adjust button text color for light themes to keep it readable
+            if (color === '#ffffff' || color === '#e9c46a' || color === '#aacc00') {
+                document.documentElement.style.setProperty('--theme-text', '#000000');
+            } else {
+                document.documentElement.style.setProperty('--theme-text', '#ffffff');
+            }
         }
 
         function toggleSettings() {
@@ -479,16 +518,35 @@
             const btn = document.getElementById('flipBtn');
             const currentFlipTime = timeTiers[currentTimeIndex] * 1000;
             
-            coin.style.animation = `flipAir ${currentFlipTime}ms ease-in-out`;
+            const chance = chanceTiers[currentChanceIndex] / 100;
+            const isHeads = Math.random() < chance;
+            
+            // Calculate exact landing rotation
+            let nextRotation = currentRotation + 1800; // Base 5 spins
+            
+            if (isHeads) {
+                if (nextRotation % 360 !== 0) nextRotation += 180;
+            } else {
+                if (nextRotation % 360 === 0) nextRotation += 180;
+            }
+
+            // Web Animation API to physically target the exact outcome
+            coin.animate([
+                { transform: `translateY(0) rotateX(${currentRotation}deg)` },
+                { transform: `translateY(-350px) rotateX(${currentRotation + (nextRotation - currentRotation) / 2}deg)` },
+                { transform: `translateY(0) rotateX(${nextRotation}deg)` }
+            ], {
+                duration: currentFlipTime,
+                easing: 'ease-in-out'
+            });
+
             btn.style.opacity = '0.5';
             btn.innerText = '...';
 
             setTimeout(() => {
-                const chance = chanceTiers[currentChanceIndex] / 100;
-                const isHeads = Math.random() < chance;
-                
-                coin.style.animation = 'none';
-                coin.style.transform = isHeads ? 'rotateX(0deg)' : 'rotateX(180deg)';
+                // Lock final position
+                coin.style.transform = `rotateX(${nextRotation}deg)`;
+                currentRotation = nextRotation;
                 
                 btn.style.opacity = '1';
                 btn.innerText = 'FLIP';
