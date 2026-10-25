@@ -18,6 +18,7 @@
             background-color: #050505;
             color: white;
             font-family: 'Montserrat', sans-serif;
+            user-select: none;
         }
 
         /* Room */
@@ -53,20 +54,33 @@
             position: relative;
             z-index: 1;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+            gap: 20px;
+            box-sizing: border-box;
+            padding-right: 380px; /* Make room for sidebar */
         }
 
         /* Coin Mechanics */
-        .coin-container {
-            position: absolute;
-            left: 20%;
-            top: -60px;
+        .coin-wrapper {
             perspective: 1000px;
             z-index: 5;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .coin-wrapper.selected {
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 30px var(--theme);
         }
 
         .coin {
-            width: 130px;
-            height: 130px;
+            width: 100px;
+            height: 100px;
             position: relative;
             transform-style: preserve-3d;
             transform: rotateX(0deg);
@@ -78,51 +92,21 @@
             height: 100%;
             backface-visibility: hidden;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.7), inset 0 0 5px rgba(255,255,255,0.4), 0 15px 25px rgba(0,0,0,0.9);
-            transition: background 0.3s, border 0.3s, color 0.3s;
+            background-size: cover;
+            background-position: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 15px 25px rgba(0,0,0,0.9);
+            border: 2px solid #333;
         }
 
         .coin-back {
             transform: rotateX(180deg);
         }
 
-        /* Material Colors */
-        .coin-copper {
-            background: linear-gradient(135deg, #ffb380 0%, #b87333 40%, #703612 100%);
-            border: 4px solid #8b4513;
-            color: #3e1f04;
-        }
-
-        .coin-silver {
-            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 40%, #696969 100%);
-            border: 4px solid #808080;
-            color: #333333;
-        }
-
-        .coin-gold {
-            background: linear-gradient(135deg, #ffe55c 0%, #daa520 40%, #8b6508 100%);
-            border: 4px solid #b8860b;
-            color: #553a00;
-        }
-
-        /* SVG Indentation Effect */
-        .coin-svg {
-            width: 85%;
-            height: 85%;
-            position: absolute;
-            top: 7.5%;
-            left: 7.5%;
-            filter: drop-shadow(-1px -1px 1px rgba(0,0,0,0.6)) drop-shadow(1px 1px 1px rgba(255,255,255,0.3));
-        }
-
         /* UI Elements */
         .btn-wrapper {
             position: absolute;
             bottom: 40px;
-            left: 40%;
+            left: calc(50% - 190px);
             transform: translateX(-50%);
             width: 180px;
             height: 80px;
@@ -167,9 +151,7 @@
             height: 100%;
         }
 
-        @keyframes rotateLight {
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes rotateLight { 100% { transform: rotate(360deg); } }
 
         .sidebar {
             position: absolute;
@@ -192,14 +174,7 @@
             align-items: center;
             border-bottom: 2px solid #222;
             padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stats {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            font-size: 18px;
+            margin-bottom: 15px;
         }
 
         .stats h2 {
@@ -208,54 +183,80 @@
             font-size: 36px;
         }
 
+        .coin-selector-header {
+            color: var(--theme);
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 5px;
+            background: #111;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
         .upgrades {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin: 30px 0;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
-        .upgrade-btn {
+        .upgrade-btn, .add-coin-btn {
             background: #151515;
             color: white;
             border: 2px solid var(--theme);
-            padding: 15px;
+            padding: 12px;
             cursor: pointer;
             border-radius: 6px;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
             transition: 0.2s;
         }
 
-        .upgrade-btn:hover { background: var(--theme); color: #fff; }
+        .add-coin-btn {
+            background: var(--theme);
+            color: var(--theme-text);
+            margin-bottom: 15px;
+        }
+
+        .upgrade-btn:hover, .add-coin-btn:hover { filter: brightness(1.2); }
+        .upgrade-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .history-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            margin-top: 10px;
         }
 
         .history-container h3 {
             color: var(--theme);
-            margin-bottom: 10px;
-            font-size: 22px;
+            margin: 0 0 10px 0;
+            font-size: 20px;
         }
 
         .history-list {
             flex-grow: 1;
             overflow-y: auto;
-            font-size: 16px;
+            font-size: 14px;
             color: #ccc;
             background: #080808;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #222;
         }
 
         .history-item {
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #1a1a1a;
         }
 
@@ -280,13 +281,7 @@
         }
 
         .settings-modal.open { display: flex; }
-
         .settings-modal h1 { color: var(--theme); }
-
-        .info-box {
-            background: #111; padding: 20px; border: 1px solid #333;
-            border-radius: 8px; margin-bottom: 30px; font-size: 18px; line-height: 1.6;
-        }
 
         .color-grid {
             display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 30px;
@@ -297,8 +292,13 @@
             cursor: pointer; border: 2px solid #fff;
         }
 
-        .danger-zone {
-            margin-top: 20px; padding: 20px; border: 1px solid #ff4444; border-radius: 8px;
+        .action-row {
+            display: flex; gap: 20px; margin-top: 20px;
+        }
+
+        .save-btn {
+            background: #2a9d8f; color: white; border: none; padding: 12px 20px;
+            font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px;
         }
 
         .reset-btn {
@@ -327,7 +327,11 @@
                 <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
             </div>
             
-            <div class="stats">
+            <button class="add-coin-btn" id="addCoinBtn" onclick="addNewCoin()">+ Add Another Coin (Free)</button>
+
+            <div class="coin-selector-header" id="selectedCoinHeader">Selected: Coin #1</div>
+            
+            <div class="stats-grid">
                 <div><strong>Total Rolls:</strong> <span id="totalRolls">0</span></div>
                 <div><strong>Heads Chance:</strong> <span id="chanceDisplay">10.0</span>%</div>
                 <div><strong>Coin Value:</strong> $<span id="valueDisplay">0.01</span></div>
@@ -346,57 +350,17 @@
             </div>
         </div>
 
-        <div class="table">
-            <div class="coin-container">
-                <div class="coin" id="coin">
-                    <!-- HEADS (Lincoln) -->
-                    <div class="coin-face coin-copper" id="faceFront">
-                        <svg viewBox="0 0 100 100" class="coin-svg">
-                            <path id="arc-top" d="M 15,35 A 40,40 0 0,1 85,35" fill="none" />
-                            <text font-size="8" font-family="Montserrat" font-weight="900" fill="currentColor">
-                                <textPath href="#arc-top" startOffset="50%" text-anchor="middle">IN GOD WE TRUST</textPath>
-                            </text>
-                            <path d="M 45,20 C 55,20 60,30 60,40 C 60,50 65,65 75,75 L 30,75 C 35,65 40,55 40,45 C 40,35 35,25 45,20 Z" fill="currentColor" />
-                            <text x="15" y="60" font-size="6" font-family="Montserrat" font-weight="bold" fill="currentColor">LIBERTY</text>
-                            <text x="70" y="65" font-size="8" font-family="Montserrat" font-weight="bold" fill="currentColor">2026</text>
-                        </svg>
-                    </div>
-                    
-                    <!-- TAILS (Memorial) -->
-                    <div class="coin-face coin-back coin-copper" id="faceBack">
-                        <svg viewBox="0 0 100 100" class="coin-svg">
-                            <path id="arc-back" d="M 15,30 A 40,40 0 0,1 85,30" fill="none" />
-                            <text font-size="8" font-family="Montserrat" font-weight="900" fill="currentColor">
-                                <textPath href="#arc-back" startOffset="50%" text-anchor="middle">UNITED STATES OF AMERICA</textPath>
-                            </text>
-                            <path id="arc-bot" d="M 85,70 A 40,40 0 0,1 15,70" fill="none" />
-                            <text font-size="10" font-family="Montserrat" font-weight="900" fill="currentColor">
-                                <textPath href="#arc-bot" startOffset="50%" text-anchor="middle">ONE CENT</textPath>
-                            </text>
-                            <rect x="30" y="40" width="40" height="20" fill="none" stroke="currentColor" stroke-width="2"/>
-                            <line x1="35" y1="40" x2="35" y2="60" stroke="currentColor" stroke-width="2"/>
-                            <line x1="42.5" y1="40" x2="42.5" y2="60" stroke="currentColor" stroke-width="2"/>
-                            <line x1="50" y1="40" x2="50" y2="60" stroke="currentColor" stroke-width="2"/>
-                            <line x1="57.5" y1="40" x2="57.5" y2="60" stroke="currentColor" stroke-width="2"/>
-                            <line x1="65" y1="40" x2="65" y2="60" stroke="currentColor" stroke-width="2"/>
-                            <text x="50" y="37" font-size="4" font-weight="bold" font-family="Montserrat" text-anchor="middle" fill="currentColor">E PLURIBUS UNUM</text>
-                        </svg>
-                    </div>
-                </div>
-            </div>
+        <div class="table" id="table">
+            <!-- Coins generated via JS -->
         </div>
 
         <div class="btn-wrapper">
-            <button class="flip-btn" id="flipBtn" onclick="flipCoin()">FLIP</button>
+            <button class="flip-btn" id="flipBtn" onclick="flipAllCoins()">FLIP</button>
         </div>
 
         <div class="settings-modal" id="settingsModal">
             <h1>Settings & Info</h1>
             
-            <div class="info-box">
-                <strong>Game Goal:</strong> Accumulate $1,000,000 by flipping. Heads generates money. Tails has no value. 
-            </div>
-
             <h2>Theme Color</h2>
             <div class="color-grid">
                 <div class="color-swatch" style="background: #8a2be2;" onclick="setTheme('#8a2be2')"></div>
@@ -405,92 +369,102 @@
                 <div class="color-swatch" style="background: #4361ee;" onclick="setTheme('#4361ee')"></div>
                 <div class="color-swatch" style="background: #2a9d8f;" onclick="setTheme('#2a9d8f')"></div>
                 <div class="color-swatch" style="background: #e9c46a;" onclick="setTheme('#e9c46a')"></div>
-                <div class="color-swatch" style="background: #f4a261;" onclick="setTheme('#f4a261')"></div>
-                <div class="color-swatch" style="background: #ff006e;" onclick="setTheme('#ff006e')"></div>
-                <div class="color-swatch" style="background: #aacc00;" onclick="setTheme('#aacc00')"></div>
                 <div class="color-swatch" style="background: #ffffff;" onclick="setTheme('#ffffff')"></div>
             </div>
 
-            <div class="danger-zone">
-                <h2 style="color: #ff4444; margin-top: 0;">Danger Zone</h2>
-                <button class="reset-btn" onclick="resetProgress()">Reset All Progress</button>
+            <div class="action-row">
+                <button class="save-btn" onclick="saveGame()">💾 Save Game</button>
+                <button class="reset-btn" onclick="resetProgress()">⚠️ Reset All Progress</button>
             </div>
+            
+            <p id="saveMsg" style="color: #2a9d8f; font-weight: bold; display: none;">Game Saved Successfully!</p>
 
             <button class="close-settings" onclick="toggleSettings()">Close Settings</button>
         </div>
     </div>
 
     <script>
-        let balance = 0;
-        let totalRolls = 0;
-        let isFlipping = false;
-        let history = [];
-        let currentRotation = 0;
-
+        // Data Arrays
         const chanceTiers = [10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 32.5, 35.0, 37.5, 40.0, 42.5, 45.0, 47.5, 50.0, 52.5, 55.0, 57.5, 60.0, 62.5, 65.0, 67.5, 70.0, 72.5, 75.0];
         const valueTiers = [0.01, 0.05, 0.10, 0.25, 0.50, 1, 2, 5, 10, 20, 50, 100];
         const timeTiers = [3.0, 2.9, 2.8, 2.7, 2.6, 2.5, 2.4, 2.3, 2.2, 2.1, 2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0];
 
-        let currentChanceIndex = 0;
-        let currentValueIndex = 0;
-        let currentTimeIndex = 0;
+        // Realistic Wikimedia Commons Image Mapping
+        function getCoinImages(value) {
+            if (value >= 1.00) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Krugerrand_1oz_2017_obverse.jpg/240px-Krugerrand_1oz_2017_obverse.jpg', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Krugerrand_1oz_2017_reverse.jpg/240px-Krugerrand_1oz_2017_reverse.jpg' };
+            if (value >= 0.50) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Kennedy_Half_Dollar_Obv_1989.png/240px-Kennedy_Half_Dollar_Obv_1989.png', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Kennedy_Half_Dollar_Rev_1989.png/240px-Kennedy_Half_Dollar_Rev_1989.png' };
+            if (value >= 0.25) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Washington_Quarter_Obv.png/240px-Washington_Quarter_Obv.png', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Washington_Quarter_Rev.png/240px-Washington_Quarter_Rev.png' };
+            if (value >= 0.10) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/US_Dime_Obv.png/240px-US_Dime_Obv.png', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/US_Dime_Rev.png/240px-US_Dime_Rev.png' };
+            if (value >= 0.05) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/US_Nickel_2013_Obv.png/240px-US_Nickel_2013_Obv.png', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/US_Nickel_2013_Rev.png/240px-US_Nickel_2013_Rev.png' };
+            return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/US_One_Cent_Obv.png/240px-US_One_Cent_Obv.png', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/US_One_Cent_Rev.png/240px-US_One_Cent_Rev.png' };
+        }
 
-        function setTheme(color) {
-            document.documentElement.style.setProperty('--theme', color);
+        // Global State
+        let balance = 0;
+        let totalRolls = 0;
+        let history = [];
+        let coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
+        let selectedCoinIndex = 0;
+        let isFlipping = false;
+
+        // Init
+        loadGame();
+
+        function renderCoins() {
+            const table = document.getElementById('table');
+            table.innerHTML = '';
             
-            // Adjust button text color for light themes to keep it readable
-            if (color === '#ffffff' || color === '#e9c46a' || color === '#aacc00') {
-                document.documentElement.style.setProperty('--theme-text', '#000000');
-            } else {
-                document.documentElement.style.setProperty('--theme-text', '#ffffff');
+            coins.forEach((coinData, index) => {
+                const val = valueTiers[coinData.valueIdx];
+                const images = getCoinImages(val);
+                
+                // Adjust size based on value
+                let size = 100;
+                if(val == 0.10) size = 85;
+                if(val == 0.25) size = 110;
+                if(val == 0.50) size = 120;
+                if(val >= 1.00) size = 130;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = `coin-wrapper ${index === selectedCoinIndex ? 'selected' : ''}`;
+                wrapper.onclick = () => selectCoin(index);
+                
+                wrapper.innerHTML = `
+                    <div class="coin" id="coin-${index}" style="width:${size}px; height:${size}px; transform: rotateX(${coinData.rotation}deg)">
+                        <div class="coin-face" style="background-image: url('${images.f}')"></div>
+                        <div class="coin-face coin-back" style="background-image: url('${images.b}')"></div>
+                    </div>
+                `;
+                table.appendChild(wrapper);
+            });
+
+            document.getElementById('addCoinBtn').style.display = coins.length >= 5 ? 'none' : 'block';
+            updateSidebar();
+        }
+
+        function selectCoin(index) {
+            if (isFlipping) return;
+            selectedCoinIndex = index;
+            renderCoins();
+        }
+
+        function addNewCoin() {
+            if (coins.length < 5) {
+                coins.push({ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 });
+                selectedCoinIndex = coins.length - 1;
+                renderCoins();
             }
         }
 
-        function toggleSettings() {
-            document.getElementById('settingsModal').classList.toggle('open');
-        }
-
-        function resetProgress() {
-            if(confirm("Are you sure you want to reset ALL progress? This cannot be undone.")) {
-                balance = 0;
-                totalRolls = 0;
-                currentChanceIndex = 0;
-                currentValueIndex = 0;
-                currentTimeIndex = 0;
-                history = [];
-                updateUI();
-                toggleSettings();
-            }
-        }
-
-        function updateCoinMaterial() {
-            const val = valueTiers[currentValueIndex];
-            const faceFront = document.getElementById('faceFront');
-            const faceBack = document.getElementById('faceBack');
-            
-            faceFront.className = "coin-face";
-            faceBack.className = "coin-face coin-back";
-
-            if (val >= 1.00) {
-                faceFront.classList.add('coin-gold');
-                faceBack.classList.add('coin-gold');
-            } else if (val >= 0.05) {
-                faceFront.classList.add('coin-silver');
-                faceBack.classList.add('coin-silver');
-            } else {
-                faceFront.classList.add('coin-copper');
-                faceBack.classList.add('coin-copper');
-            }
-        }
-
-        function updateUI() {
+        function updateSidebar() {
             document.getElementById('balance').innerText = balance.toFixed(2);
             document.getElementById('totalRolls').innerText = totalRolls;
-            document.getElementById('chanceDisplay').innerText = chanceTiers[currentChanceIndex].toFixed(1);
-            document.getElementById('valueDisplay').innerText = valueTiers[currentValueIndex].toFixed(2);
-            document.getElementById('timeDisplay').innerText = timeTiers[currentTimeIndex].toFixed(1);
+            document.getElementById('selectedCoinHeader').innerText = `Selected: Coin #${selectedCoinIndex + 1}`;
             
-            updateCoinMaterial();
+            const activeCoin = coins[selectedCoinIndex];
+            document.getElementById('chanceDisplay').innerText = chanceTiers[activeCoin.chanceIdx].toFixed(1);
+            document.getElementById('valueDisplay').innerText = valueTiers[activeCoin.valueIdx].toFixed(2);
+            document.getElementById('timeDisplay').innerText = timeTiers[activeCoin.timeIdx].toFixed(1);
 
             const historyContainer = document.getElementById('historyList');
             historyContainer.innerHTML = '';
@@ -504,84 +478,125 @@
 
         function addHistory(text) {
             history.unshift(text);
-            if (history.length > 10) {
-                history.pop();
-            }
-            updateUI();
+            if (history.length > 10) history.pop();
+            updateSidebar();
         }
 
-        function flipCoin() {
+        function flipAllCoins() {
             if (isFlipping) return;
             isFlipping = true;
             
-            const coin = document.getElementById('coin');
             const btn = document.getElementById('flipBtn');
-            const currentFlipTime = timeTiers[currentTimeIndex] * 1000;
-            
-            const chance = chanceTiers[currentChanceIndex] / 100;
-            const isHeads = Math.random() < chance;
-            
-            // Calculate exact landing rotation
-            let nextRotation = currentRotation + 1800; // Base 5 spins
-            
-            if (isHeads) {
-                if (nextRotation % 360 !== 0) nextRotation += 180;
-            } else {
-                if (nextRotation % 360 === 0) nextRotation += 180;
-            }
-
-            // Web Animation API to physically target the exact outcome
-            coin.animate([
-                { transform: `translateY(0) rotateX(${currentRotation}deg)` },
-                { transform: `translateY(-350px) rotateX(${currentRotation + (nextRotation - currentRotation) / 2}deg)` },
-                { transform: `translateY(0) rotateX(${nextRotation}deg)` }
-            ], {
-                duration: currentFlipTime,
-                easing: 'ease-in-out'
-            });
-
             btn.style.opacity = '0.5';
             btn.innerText = '...';
 
-            setTimeout(() => {
-                // Lock final position
-                coin.style.transform = `rotateX(${nextRotation}deg)`;
-                currentRotation = nextRotation;
+            let maxTime = 0;
+            let totalEarned = 0;
+            let headsCount = 0;
+            totalRolls++;
+
+            coins.forEach((coinData, index) => {
+                const domCoin = document.getElementById(`coin-${index}`);
+                const flipTimeMs = timeTiers[coinData.timeIdx] * 1000;
+                if (flipTimeMs > maxTime) maxTime = flipTimeMs;
+
+                const chance = chanceTiers[coinData.chanceIdx] / 100;
+                const isHeads = Math.random() < chance;
                 
+                let nextRotation = coinData.rotation + 1800; // 5 spins
+                if (isHeads && nextRotation % 360 !== 0) nextRotation += 180;
+                if (!isHeads && nextRotation % 360 === 0) nextRotation += 180;
+
+                domCoin.animate([
+                    { transform: `translateY(0) rotateX(${coinData.rotation}deg)` },
+                    { transform: `translateY(-300px) rotateX(${coinData.rotation + (nextRotation - coinData.rotation)/2}deg)` },
+                    { transform: `translateY(0) rotateX(${nextRotation}deg)` }
+                ], { duration: flipTimeMs, easing: 'ease-in-out' });
+
+                setTimeout(() => {
+                    domCoin.style.transform = `rotateX(${nextRotation}deg)`;
+                    coinData.rotation = nextRotation;
+                    if (isHeads) {
+                        headsCount++;
+                        totalEarned += valueTiers[coinData.valueIdx];
+                    }
+                }, flipTimeMs);
+            });
+
+            setTimeout(() => {
+                balance += totalEarned;
+                addHistory(`Roll ${totalRolls}: ${headsCount} Heads (+$${totalEarned.toFixed(2)})`);
                 btn.style.opacity = '1';
                 btn.innerText = 'FLIP';
                 isFlipping = false;
-
-                totalRolls++;
-
-                if (isHeads) {
-                    const amount = valueTiers[currentValueIndex];
-                    balance += amount;
-                    addHistory(`Roll ${totalRolls}: Heads (+$${amount.toFixed(2)})`);
-                } else {
-                    addHistory(`Roll ${totalRolls}: Tails ($0.00)`);
-                }
-
-                updateUI();
-            }, currentFlipTime);
+                renderCoins();
+            }, maxTime);
         }
 
         function upgradeChance() {
-            if (currentChanceIndex < chanceTiers.length - 1) currentChanceIndex++;
-            updateUI();
+            if (coins[selectedCoinIndex].chanceIdx < chanceTiers.length - 1) {
+                coins[selectedCoinIndex].chanceIdx++;
+                renderCoins();
+            }
         }
 
         function upgradeValue() {
-            if (currentValueIndex < valueTiers.length - 1) currentValueIndex++;
-            updateUI();
+            if (coins[selectedCoinIndex].valueIdx < valueTiers.length - 1) {
+                coins[selectedCoinIndex].valueIdx++;
+                renderCoins();
+            }
         }
 
         function upgradeTime() {
-            if (currentTimeIndex < timeTiers.length - 1) currentTimeIndex++;
-            updateUI();
+            if (coins[selectedCoinIndex].timeIdx < timeTiers.length - 1) {
+                coins[selectedCoinIndex].timeIdx++;
+                renderCoins();
+            }
         }
 
-        updateUI();
+        function setTheme(color) {
+            document.documentElement.style.setProperty('--theme', color);
+            document.documentElement.style.setProperty('--theme-text', (color === '#ffffff' || color === '#e9c46a') ? '#000' : '#fff');
+        }
+
+        function toggleSettings() {
+            document.getElementById('settingsModal').classList.toggle('open');
+            document.getElementById('saveMsg').style.display = 'none';
+        }
+
+        function saveGame() {
+            const saveData = { balance, totalRolls, history, coins, theme: getComputedStyle(document.documentElement).getPropertyValue('--theme').trim() };
+            localStorage.setItem('coinFlipMasterSave', JSON.stringify(saveData));
+            const msg = document.getElementById('saveMsg');
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('coinFlipMasterSave');
+            if (saved) {
+                const data = JSON.parse(saved);
+                balance = data.balance || 0;
+                totalRolls = data.totalRolls || 0;
+                history = data.history || [];
+                coins = data.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
+                if (data.theme) setTheme(data.theme);
+            }
+            renderCoins();
+        }
+
+        function resetProgress() {
+            if(confirm("Are you sure you want to reset ALL progress? This cannot be undone.")) {
+                localStorage.removeItem('coinFlipMasterSave');
+                balance = 0;
+                totalRolls = 0;
+                history = [];
+                coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
+                selectedCoinIndex = 0;
+                renderCoins();
+                toggleSettings();
+            }
+        }
     </script>
 </body>
 </html>
