@@ -74,7 +74,7 @@ body {
 
 /* Hyper-Realistic Coin Mechanics */
 .coin-wrapper {
-    perspective: 1500px; /* Deeper perspective for 3D realism */
+    perspective: 1500px; 
     z-index: 5;
     cursor: pointer;
     padding: 15px;
@@ -118,7 +118,7 @@ body {
     border-radius: 50%;
     background-size: cover;
     background-position: center;
-    filter: brightness(0.3); /* Dark edges for shadow */
+    filter: brightness(0.3);
     backface-visibility: hidden;
 }
 
@@ -130,8 +130,34 @@ body {
     border-radius: 50%;
     background-size: cover;
     background-position: center;
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5); /* Ambient edge shading */
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5); 
     border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Solid Metallic Materials (Fixes the see-through bug) */
+.coin-copper {
+    background: linear-gradient(135deg, #ffb380 0%, #b87333 40%, #703612 100%);
+    border: 2px solid #8b4513;
+}
+
+.coin-silver {
+    background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 40%, #696969 100%);
+    border: 2px solid #808080;
+}
+
+.coin-gold {
+    background: linear-gradient(135deg, #ffe55c 0%, #daa520 40%, #8b6508 100%);
+    border: 2px solid #b8860b;
+}
+
+/* The Custom SVG Face Restraints */
+.coin-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
 }
 
 /* The Animated Shine Effect */
