@@ -36,10 +36,18 @@ function selectCoin(index) {
 
 function addNewCoin() {
     if (coins.length < 5) {
-        coins.push({ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 });
-        selectedCoinIndex = coins.length - 1;
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-        updateSidebar();
+        if (balance >= 10000) {
+            balance -= 10000;
+            coins.push({ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 });
+            selectedCoinIndex = coins.length - 1;
+            renderCoins(coins, selectedCoinIndex, selectCoin);
+            updateSidebar();
+        } else {
+            // Flash red if they can't afford it
+            const btn = document.getElementById('addCoinBtn');
+            btn.style.backgroundColor = '#ff4444';
+            setTimeout(() => btn.style.backgroundColor = '', 300);
+        }
     }
 }
 
@@ -62,31 +70,42 @@ function updateSidebar() {
         historyContainer.appendChild(div);
     });
 
-    // Update Chance Button Text
+    // Update Chance Button Text (removed "Upgrade")
     const chanceBtn = document.getElementById('chanceBtn');
     if (activeCoin.chanceIdx < chanceTiers.length - 1) {
         const cost = chanceCosts[activeCoin.chanceIdx];
-        chanceBtn.innerHTML = `Upgrade Chance Lvl ${activeCoin.chanceIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
+        chanceBtn.innerHTML = `Chance Lvl ${activeCoin.chanceIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
-        chanceBtn.innerHTML = `Upgrade Chance (MAX LEVEL)`;
+        chanceBtn.innerHTML = `Chance (MAX LEVEL)`;
     }
 
-    // Update Value Button Text
+    // Update Value Button Text (removed "Upgrade")
     const valueBtn = document.getElementById('valueBtn');
     if (activeCoin.valueIdx < valueTiers.length - 1) {
         const cost = valueCosts[activeCoin.valueIdx];
-        valueBtn.innerHTML = `Upgrade Value Lvl ${activeCoin.valueIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
+        valueBtn.innerHTML = `Value Lvl ${activeCoin.valueIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
-        valueBtn.innerHTML = `Upgrade Value (MAX LEVEL)`;
+        valueBtn.innerHTML = `Value (MAX LEVEL)`;
     }
 
-    // Update Time Button Text
+    // Update Time Button Text (removed "Upgrade")
     const timeBtn = document.getElementById('timeBtn');
     if (activeCoin.timeIdx < timeTiers.length - 1) {
         const cost = timeCosts[activeCoin.timeIdx];
-        timeBtn.innerHTML = `Upgrade Time Lvl ${activeCoin.timeIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
+        timeBtn.innerHTML = `Time Lvl ${activeCoin.timeIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
-        timeBtn.innerHTML = `Upgrade Time (MAX LEVEL)`;
+        timeBtn.innerHTML = `Time (MAX LEVEL)`;
+    }
+    
+    // Add Coin Button updates text/hides at max
+    const addCoinBtn = document.getElementById('addCoinBtn');
+    if (addCoinBtn) {
+        if (coins.length < 5) {
+            addCoinBtn.style.display = 'flex';
+            addCoinBtn.innerHTML = `+ Add Coin <span style="color: white;">(</span><span style="color: #4ade80;">$10000</span><span style="color: white;">)</span>`;
+        } else {
+            addCoinBtn.style.display = 'none';
+        }
     }
 }
 
