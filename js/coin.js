@@ -1,8 +1,7 @@
-// This file handles the 3D coin mechanics, images, and animations
+// This file handles the 3D coin mechanics, images, and layers
 
 import { chanceTiers, valueTiers, timeTiers } from './upgrades.js';
 
-// Realistic Wikimedia Commons Image Mapping
 export function getCoinImages(value) {
     if (value >= 1.00) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Krugerrand_1oz_2017_obverse.jpg/240px-Krugerrand_1oz_2017_obverse.jpg', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Krugerrand_1oz_2017_reverse.jpg/240px-Krugerrand_1oz_2017_reverse.jpg' };
     if (value >= 0.50) return { f: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Kennedy_Half_Dollar_Obv_1989.png/240px-Kennedy_Half_Dollar_Obv_1989.png', b: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Kennedy_Half_Dollar_Rev_1989.png/240px-Kennedy_Half_Dollar_Rev_1989.png' };
@@ -20,13 +19,6 @@ export function renderCoins(coins, selectedCoinIndex, selectCoinCallback) {
         const val = valueTiers[coinData.valueIdx];
         const images = getCoinImages(val);
         
-        // Add fallback metallic colors just in case the browser blocks the images
-        let fallbackBg = '#b87333'; // Copper
-        let fallbackText = '#5c3a21';
-        if (val >= 1.00) { fallbackBg = '#daa520'; fallbackText = '#553a00'; } // Gold
-        else if (val >= 0.05) { fallbackBg = '#c0c0c0'; fallbackText = '#333333'; } // Silver
-        
-        // Adjust size based on value
         let size = 100;
         if(val == 0.10) size = 85;
         if(val == 0.25) size = 110;
@@ -38,9 +30,24 @@ export function renderCoins(coins, selectedCoinIndex, selectCoinCallback) {
         wrapper.onclick = () => selectCoinCallback(index);
         
         wrapper.innerHTML = `
+            <div class="coin-shadow" id="shadow-${index}" style="width: ${size}px; height: ${size/5}px;"></div>
             <div class="coin" id="coin-${index}" style="width:${size}px; height:${size}px; transform: rotateX(${coinData.rotation}deg)">
-                <div class="coin-face" style="background-color: ${fallbackBg}; background-image: url('${images.f}'); color: ${fallbackText}; display: flex; align-items: center; justify-content: center; font-size: ${size/2.5}px; font-weight: 900;">H</div>
-                <div class="coin-face coin-back" style="background-color: ${fallbackBg}; background-image: url('${images.b}'); color: ${fallbackText}; display: flex; align-items: center; justify-content: center; font-size: ${size/2.5}px; font-weight: 900;">T</div>
+                
+                <!-- Inner 3D Edge Slices -->
+                <div class="coin-edge" style="background-image: url('${images.f}'); transform: translateZ(1px);"></div>
+                <div class="coin-edge" style="background-image: url('${images.f}'); transform: translateZ(2px);"></div>
+                <div class="coin-edge" style="background-image: url('${images.f}'); transform: translateZ(3px);"></div>
+                <div class="coin-edge" style="background-image: url('${images.f}'); transform: translateZ(4px);"></div>
+
+                <!-- Front Face (Pushed Outwards) -->
+                <div class="coin-face" style="background-image: url('${images.f}'); transform: translateZ(5px);">
+                    <div class="shine" id="shine-f-${index}"></div>
+                </div>
+                
+                <!-- Back Face (Pushed Inwards) -->
+                <div class="coin-face coin-back" style="background-image: url('${images.b}'); transform: rotateX(180deg) translateZ(0px);">
+                    <div class="shine" id="shine-b-${index}"></div>
+                </div>
             </div>
         `;
         table.appendChild(wrapper);
@@ -48,6 +55,6 @@ export function renderCoins(coins, selectedCoinIndex, selectCoinCallback) {
 
     const addBtn = document.getElementById('addCoinBtn');
     if (addBtn) {
-        addBtn.style.display = coins.length >= 5 ? 'none' : 'block';
+        addBtn.style.display = coins.length >= 5 ? 'none' : 'flex';
     }
 }
