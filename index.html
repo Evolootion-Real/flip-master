@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Flip Master</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #050505;
+            color: white;
+            font-family: sans-serif;
+        }
+
+        .room {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .led-strip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #fff;
+            box-shadow: 0 0 20px #fff, 0 0 40px #fff;
+        }
+
+        .table {
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(to top, #0a0a0a, #1a1a1a);
+            border-top: 2px solid #222;
+            position: relative;
+        }
+
+        .coin {
+            position: absolute;
+            left: 20%;
+            top: -60px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffd700, #b8860b);
+            border-radius: 50%;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 15px 25px rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: #553a00;
+            border: 4px solid #daa520;
+            transition: transform 0.1s;
+        }
+
+        .flipping {
+            animation: flipAnimation 0.15s infinite linear;
+        }
+
+        @keyframes flipAnimation {
+            0% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+            100% { transform: scaleY(1); }
+        }
+
+        .btn-wrapper {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .btn-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 250%;
+            height: 250%;
+            background: conic-gradient(transparent, transparent, transparent, #8a2be2);
+            animation: rotateLight 2s linear infinite;
+        }
+
+        .btn-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: #111;
+            border-radius: 8px;
+        }
+
+        .flip-btn {
+            position: relative;
+            z-index: 1;
+            background: transparent;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 3px;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes rotateLight {
+            100% { transform: rotate(360deg); }
+        }
+
+        .sidebar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 320px;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            border-left: 2px solid #8a2be2;
+            transform: translateX(0);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .sidebar.closed {
+            transform: translateX(300px);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            width: 30px;
+            height: 60px;
+            background: #8a2be2;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px 0 0 10px;
+            font-weight: bold;
+        }
+
+        .stats h2 {
+            color: #8a2be2;
+            margin-top: 0;
+        }
+
+        .upgrades {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .upgrade-btn {
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #8a2be2;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .upgrade-btn:hover {
+            background: #2a2a2a;
+        }
+
+        .history-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #ccc;
+            margin-top: 10px;
+        }
+
+        .history-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .milestone-alert {
+            color: #8a2be2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="room">
+        <div class="led-strip"></div>
+        
+        <div class="sidebar" id="sidebar">
+            <button class="toggle-btn" onclick="toggleSidebar()" id="toggleBtn">></button>
+            <div class="stats">
+                <h2>Balance: $<span id="balance">0.00</span></h2>
+                <div>Goal: $1,000,000</div>
+                <br>
+                <div>Total Rolls: <span id="totalRolls">0</span></div>
+                <div>Chance of Heads: <span id="chanceDisplay">10.0</span>%</div>
+                <div>Coin Value: $<span id="valueDisplay">0.01</span></div>
+                <div>Flip Time: <span id="timeDisplay">3.0</span>s</div>
+            </div>
+            
+            <div class="upgrades">
+                <button class="upgrade-btn" onclick="upgradeChance()">Upgrade Chance (Free for now)</button>
+                <button class="upgrade-btn" onclick="upgradeValue()">Upgrade Value (Free for now)</button>
+                <button class="upgrade-btn" onclick="upgradeTime()">Upgrade Time (Free for now)</button>
+            </div>
+
+            <h3 style="color: #8a2be2;">Roll History</h3>
+            <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="table">
+            <div class="coin" id="coin">?</div>
+        </div>
+
+        <div class="btn-wrapper">
+            <button class="flip-btn" id="flipBtn" onclick="flipCoin()">FLIP</button>
+        </div>
+    </div>
+
+    <script>
+        // Core Variables
+        let balance = 0;
+        let totalRolls = 0;
+        let isFlipping = false;
+        let history = [];
+
+        // Mechanics Arrays
+        const chanceTiers = [10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 32.5, 35.0, 37.5, 40.0, 42.5, 45.0, 47.5, 50.0, 52.5, 55.0, 57.5, 60.0, 62.5, 65.0, 67.5, 70.0, 72.5, 75.0];
+        const valueTiers = [0.01, 0.05, 0.10, 0.25, 0.50, 1, 2, 5, 10, 20, 50, 100];
+        const timeTiers = [3.0, 2.9, 2.8, 2.7, 2.6, 2.5, 2.4, 2.3, 2.2, 2.1, 2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0];
+
+        // Track Current Levels
+        let currentChanceIndex = 0;
+        let currentValueIndex = 0;
+        let currentTimeIndex = 0;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const btn = document.getElementById('toggleBtn');
+            sidebar.classList.toggle('closed');
+            btn.innerText = sidebar.classList.contains('closed') ? '<' : '>';
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = balance.toFixed(2);
+            document.getElementById('totalRolls').innerText = totalRolls;
+            document.getElementById('chanceDisplay').innerText = chanceTiers[currentChanceIndex].toFixed(1);
+            document.getElementById('valueDisplay').innerText = valueTiers[currentValueIndex].toFixed(2);
+            document.getElementById('timeDisplay').innerText = timeTiers[currentTimeIndex].toFixed(1);
+            
+            const historyContainer = document.getElementById('historyList');
+            historyContainer.innerHTML = '';
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item ' + (item.includes('Milestone') ? 'milestone-alert' : '');
+                div.innerText = item;
+                historyContainer.appendChild(div);
+            });
+        }
+
+        function addHistory(text) {
+            history.unshift(text);
+            if (history.length > 10) {
+                history.pop();
+            }
+            updateUI();
+        }
+
+        function checkMilestones() {
+            const milestones = [10, 100, 1000, 10000];
+            if (milestones.includes(totalRolls)) {
+                addHistory(`Milestone: Reached ${totalRolls} rolls!`);
+            }
+        }
+
+        function flipCoin() {
+            if (isFlipping) return;
+            isFlipping = true;
+            
+            const coin = document.getElementById('coin');
+            const btn = document.getElementById('flipBtn');
+            const currentFlipTime = timeTiers[currentTimeIndex] * 1000;
+            
+            coin.classList.add('flipping');
+            btn.style.opacity = '0.5';
+            btn.innerText = '...';
+
+            setTimeout(() => {
+                coin.classList.remove('flipping');
+                btn.style.opacity = '1';
+                btn.innerText = 'FLIP';
+                isFlipping = false;
+
+                totalRolls++;
+                const chance = chanceTiers[currentChanceIndex] / 100;
+                const roll = Math.random();
+                const isHeads = roll < chance;
+
+                if (isHeads) {
+                    coin.innerText = 'H';
+                    const amount = valueTiers[currentValueIndex];
+                    balance += amount;
+                    addHistory(`Roll ${totalRolls}: Heads (+$${amount.toFixed(2)})`);
+                } else {
+                    coin.innerText = 'T';
+                    addHistory(`Roll ${totalRolls}: Tails ($0.00)`);
+                }
+
+                checkMilestones();
+            }, currentFlipTime);
+        }
+
+        function upgradeChance() {
+            if (currentChanceIndex < chanceTiers.length - 1) {
+                currentChanceIndex++;
+                updateUI();
+            }
+        }
+
+        function upgradeValue() {
+            if (currentValueIndex < valueTiers.length - 1) {
+                currentValueIndex++;
+                updateUI();
+            }
+        }
+
+        function upgradeTime() {
+            if (currentTimeIndex < timeTiers.length - 1) {
+                currentTimeIndex++;
+                updateUI();
+            }
+        }
+
+        // Initialize UI
+        updateUI();
+    </script>
+</body>
+</html>
