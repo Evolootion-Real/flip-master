@@ -1,243 +1,80 @@
-// This is the main application file that ties all modules together
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CJ COIN APP</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
-import { setTheme, toggleSettings, saveGame, loadGame } from './settings.js';
-import { renderCoins } from './coin.js';
-
-// Global Game State
-let balance = 0;
-let totalRolls = 0;
-let history = [];
-let coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
-let selectedCoinIndex = 0;
-let isFlipping = false;
-
-// Initialize Game
-function init() {
-    const saved = loadGame();
-    if (saved) {
-        balance = saved.balance || 0;
-        totalRolls = saved.totalRolls || 0;
-        history = saved.history || [];
-        coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
-        if (saved.theme) setTheme(saved.theme);
-    }
-    renderCoins(coins, selectedCoinIndex, selectCoin);
-    updateSidebar();
-}
-
-// Logic Functions
-function selectCoin(index) {
-    if (isFlipping) return;
-    selectedCoinIndex = index;
-    renderCoins(coins, selectedCoinIndex, selectCoin);
-    updateSidebar();
-}
-
-function addNewCoin() {
-    if (coins.length < 5) {
-        coins.push({ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 });
-        selectedCoinIndex = coins.length - 1;
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-        updateSidebar();
-    }
-}
-
-function updateSidebar() {
-    document.getElementById('balance').innerText = balance.toFixed(2);
-    document.getElementById('totalRolls').innerText = totalRolls;
-    document.getElementById('selectedCoinHeader').innerText = `Selected: Coin #${selectedCoinIndex + 1}`;
-    
-    const activeCoin = coins[selectedCoinIndex];
-    document.getElementById('chanceDisplay').innerText = chanceTiers[activeCoin.chanceIdx].toFixed(1);
-    document.getElementById('valueDisplay').innerText = valueTiers[activeCoin.valueIdx].toFixed(2);
-    document.getElementById('timeDisplay').innerText = timeTiers[activeCoin.timeIdx].toFixed(1);
-
-    const historyContainer = document.getElementById('historyList');
-    historyContainer.innerHTML = '';
-    history.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'history-item';
-        div.innerText = item;
-        historyContainer.appendChild(div);
-    });
-
-    // Update Chance Button Text
-    const chanceBtn = document.getElementById('chanceBtn');
-    if (activeCoin.chanceIdx < chanceTiers.length - 1) {
-        const cost = chanceCosts[activeCoin.chanceIdx];
-        chanceBtn.innerHTML = `Upgrade Chance Lvl ${activeCoin.chanceIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
-    } else {
-        chanceBtn.innerHTML = `Upgrade Chance (MAX LEVEL)`;
-    }
-
-    // Update Value Button Text
-    const valueBtn = document.getElementById('valueBtn');
-    if (activeCoin.valueIdx < valueTiers.length - 1) {
-        const cost = valueCosts[activeCoin.valueIdx];
-        valueBtn.innerHTML = `Upgrade Value Lvl ${activeCoin.valueIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
-    } else {
-        valueBtn.innerHTML = `Upgrade Value (MAX LEVEL)`;
-    }
-
-    // Update Time Button Text
-    const timeBtn = document.getElementById('timeBtn');
-    if (activeCoin.timeIdx < timeTiers.length - 1) {
-        const cost = timeCosts[activeCoin.timeIdx];
-        timeBtn.innerHTML = `Upgrade Time Lvl ${activeCoin.timeIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
-    } else {
-        timeBtn.innerHTML = `Upgrade Time (MAX LEVEL)`;
-    }
-}
-
-function addHistory(text) {
-    history.unshift(text);
-    if (history.length > 10) history.pop();
-    updateSidebar();
-}
-
-function flipAllCoins() {
-    if (isFlipping) return;
-    isFlipping = true;
-    
-    const btn = document.getElementById('flipBtn');
-    btn.style.opacity = '0.5';
-    btn.innerText = '...';
-
-    let maxTime = 0;
-    let totalEarned = 0;
-    let headsCount = 0;
-    totalRolls++;
-
-    coins.forEach((coinData, index) => {
-        const domCoin = document.getElementById(`coin-${index}`);
-        const flipTimeMs = timeTiers[coinData.timeIdx] * 1000;
-        if (flipTimeMs > maxTime) maxTime = flipTimeMs;
-
-        const chance = chanceTiers[coinData.chanceIdx] / 100;
-        const isHeads = Math.random() < chance;
+    <div class="room">
+        <div class="led-top"></div>
+        <div class="led-left"></div>
+        <div class="led-right"></div>
         
-        let nextRotation = coinData.rotation + 1800; // 5 spins
-        if (isHeads && nextRotation % 360 !== 0) nextRotation += 180;
-        if (!isHeads && nextRotation % 360 === 0) nextRotation += 180;
+        <div class="sidebar">
+            <div class="header-row">
+                <div class="stats">
+                    <h2>$<span id="balance">0.00</span></h2>
+                </div>
+                <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            </div>
+            
+            <button class="add-coin-btn" id="addCoinBtn" onclick="addNewCoin()">+ Add Another Coin (Free)</button>
 
-        domCoin.animate([
-            { transform: `translateY(0) rotateX(${coinData.rotation}deg)` },
-            { transform: `translateY(-300px) rotateX(${coinData.rotation + (nextRotation - coinData.rotation)/2}deg)` },
-            { transform: `translateY(0) rotateX(${nextRotation}deg)` }
-        ], { duration: flipTimeMs, easing: 'ease-in-out' });
+            <div class="coin-selector-header" id="selectedCoinHeader">Selected: Coin #1</div>
+            
+            <div class="stats-grid">
+                <div><strong>Total Rolls:</strong> <span id="totalRolls">0</span></div>
+                <div><strong>Heads Chance:</strong> <span id="chanceDisplay">10.0</span>%</div>
+                <div><strong>Coin Value:</strong> $<span id="valueDisplay">0.01</span></div>
+                <div><strong>Flip Time:</strong> <span id="timeDisplay">3.0</span>s</div>
+            </div>
+            
+            <div class="upgrades">
+                <button class="upgrade-btn" id="chanceBtn" onclick="upgradeChance()">Upgrade Chance</button>
+                <button class="upgrade-btn" id="valueBtn" onclick="upgradeValue()">Upgrade Value</button>
+                <button class="upgrade-btn" id="timeBtn" onclick="upgradeTime()">Upgrade Time</button>
+            </div>
 
-        setTimeout(() => {
-            domCoin.style.transform = `rotateX(${nextRotation}deg)`;
-            coinData.rotation = nextRotation;
-            if (isHeads) {
-                headsCount++;
-                totalEarned += valueTiers[coinData.valueIdx];
-            }
-        }, flipTimeMs);
-    });
+            <div class="history-container">
+                <h3>Roll History</h3>
+                <div class="history-list" id="historyList"></div>
+            </div>
+        </div>
 
-    setTimeout(() => {
-        balance += totalEarned;
-        
-        if (coins.length === 1) {
-            if (headsCount === 1) {
-                addHistory(`Roll ${totalRolls}: Heads (+$${totalEarned.toFixed(2)})`);
-            } else {
-                addHistory(`Roll ${totalRolls}: Tails ($0.00)`);
-            }
-        } else {
-            const tailsCount = coins.length - headsCount;
-            addHistory(`Roll ${totalRolls}: ${headsCount} Heads, ${tailsCount} Tails (+$${totalEarned.toFixed(2)})`);
-        }
+        <div class="table" id="table"></div>
 
-        btn.style.opacity = '1';
-        btn.innerText = 'FLIP';
-        isFlipping = false;
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-    }, maxTime);
-}
+        <div class="btn-wrapper">
+            <button class="flip-btn" id="flipBtn" onclick="flipAllCoins()">FLIP</button>
+        </div>
 
-function upgradeChance() {
-    const activeCoin = coins[selectedCoinIndex];
-    if (activeCoin.chanceIdx < chanceTiers.length - 1) {
-        const cost = chanceCosts[activeCoin.chanceIdx];
-        if (balance >= cost) {
-            balance -= cost; 
-            activeCoin.chanceIdx++; 
-            renderCoins(coins, selectedCoinIndex, selectCoin);
-            updateSidebar();
-        } else {
-            const btn = document.getElementById('chanceBtn');
-            btn.style.backgroundColor = '#ff4444';
-            setTimeout(() => btn.style.backgroundColor = '', 300);
-        }
-    }
-}
+        <div class="settings-modal" id="settingsModal">
+            <h1>Settings & Info</h1>
+            
+            <h2>Theme Color</h2>
+            <div class="color-grid">
+                <div class="color-swatch" style="background: #8a2be2;" onclick="setTheme('#8a2be2')"></div>
+                <div class="color-swatch" style="background: #008B8B;" onclick="setTheme('#008B8B')"></div>
+                <div class="color-swatch" style="background: #e63946;" onclick="setTheme('#e63946')"></div>
+                <div class="color-swatch" style="background: #4361ee;" onclick="setTheme('#4361ee')"></div>
+                <div class="color-swatch" style="background: #2a9d8f;" onclick="setTheme('#2a9d8f')"></div>
+                <div class="color-swatch" style="background: #e9c46a;" onclick="setTheme('#e9c46a')"></div>
+                <div class="color-swatch" style="background: #ffffff;" onclick="setTheme('#ffffff')"></div>
+            </div>
 
-function upgradeValue() {
-    const activeCoin = coins[selectedCoinIndex];
-    if (activeCoin.valueIdx < valueTiers.length - 1) {
-        const cost = valueCosts[activeCoin.valueIdx];
-        if (balance >= cost) {
-            balance -= cost; 
-            activeCoin.valueIdx++; 
-            renderCoins(coins, selectedCoinIndex, selectCoin);
-            updateSidebar();
-        } else {
-            const btn = document.getElementById('valueBtn');
-            btn.style.backgroundColor = '#ff4444';
-            setTimeout(() => btn.style.backgroundColor = '', 300);
-        }
-    }
-}
+            <div class="action-row">
+                <button class="save-btn" onclick="saveGame()">💾 Save Game</button>
+                <button class="reset-btn" onclick="resetProgress()">⚠️ Reset All Progress</button>
+            </div>
+            
+            <p id="saveMsg" style="color: #2a9d8f; font-weight: bold; display: none;">Game Saved Successfully!</p>
 
-function upgradeTime() {
-    const activeCoin = coins[selectedCoinIndex];
-    if (activeCoin.timeIdx < timeTiers.length - 1) {
-        const cost = timeCosts[activeCoin.timeIdx];
-        if (balance >= cost) {
-            balance -= cost; 
-            activeCoin.timeIdx++; 
-            renderCoins(coins, selectedCoinIndex, selectCoin);
-            updateSidebar();
-        } else {
-            const btn = document.getElementById('timeBtn');
-            btn.style.backgroundColor = '#ff4444';
-            setTimeout(() => btn.style.backgroundColor = '', 300);
-        }
-    }
-}
+            <button class="close-settings" onclick="toggleSettings()">Close Settings</button>
+        </div>
+    </div>
 
-function performSave() {
-    const theme = getComputedStyle(document.documentElement).getPropertyValue('--theme').trim();
-    saveGame({ balance, totalRolls, history, coins, theme });
-}
-
-function resetProgress() {
-    if(confirm("Are you sure you want to reset ALL progress? This cannot be undone.")) {
-        localStorage.removeItem('coinFlipMasterSave');
-        balance = 0;
-        totalRolls = 0;
-        history = [];
-        coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
-        selectedCoinIndex = 0;
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-        updateSidebar();
-        toggleSettings();
-    }
-}
-
-// Make functions available to the HTML buttons
-window.toggleSettings = toggleSettings;
-window.setTheme = setTheme;
-window.addNewCoin = addNewCoin;
-window.flipAllCoins = flipAllCoins;
-window.upgradeChance = upgradeChance;
-window.upgradeValue = upgradeValue;
-window.upgradeTime = upgradeTime;
-window.saveGame = performSave;
-window.resetProgress = resetProgress;
-
-// Start Game
-init();
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
