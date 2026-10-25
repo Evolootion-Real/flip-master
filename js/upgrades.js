@@ -1,6 +1,9 @@
-// This file stores all the upgrade tiers for your game
+// This file stores all the upgrade tiers and costs for your game
 
 export const chanceTiers = [10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 32.5, 35.0, 37.5, 40.0, 42.5, 45.0, 47.5, 50.0, 52.5, 55.0, 57.5, 60.0, 62.5, 65.0, 67.5, 70.0, 72.5, 75.0];
+
+// Costs for chance upgrades matching the 50/100 pattern up to max level
+export const chanceCosts = [1, 5, 10, 50, 100, 200, 300, 500, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 7000, 8000, 9000, 10000];
 
 export const valueTiers = [0.01, 0.05, 0.10, 0.25, 0.50, 1, 2, 5, 10, 20, 50, 100];
 
