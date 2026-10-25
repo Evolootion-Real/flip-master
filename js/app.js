@@ -1,6 +1,6 @@
 // This is the main application file that ties all modules together
 
-import { chanceTiers, chanceCosts, valueTiers, timeTiers } from './upgrades.js';
+import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
 import { setTheme, toggleSettings, saveGame, loadGame } from './settings.js';
 import { renderCoins } from './coin.js';
 
@@ -62,13 +62,31 @@ function updateSidebar() {
         historyContainer.appendChild(div);
     });
 
-    // Update Chance Button Text with Level and Green Cost
+    // Update Chance Button Text
     const chanceBtn = document.getElementById('chanceBtn');
     if (activeCoin.chanceIdx < chanceTiers.length - 1) {
         const cost = chanceCosts[activeCoin.chanceIdx];
         chanceBtn.innerHTML = `Upgrade Chance Lvl ${activeCoin.chanceIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
         chanceBtn.innerHTML = `Upgrade Chance (MAX LEVEL)`;
+    }
+
+    // Update Value Button Text
+    const valueBtn = document.getElementById('valueBtn');
+    if (activeCoin.valueIdx < valueTiers.length - 1) {
+        const cost = valueCosts[activeCoin.valueIdx];
+        valueBtn.innerHTML = `Upgrade Value Lvl ${activeCoin.valueIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
+    } else {
+        valueBtn.innerHTML = `Upgrade Value (MAX LEVEL)`;
+    }
+
+    // Update Time Button Text
+    const timeBtn = document.getElementById('timeBtn');
+    if (activeCoin.timeIdx < timeTiers.length - 1) {
+        const cost = timeCosts[activeCoin.timeIdx];
+        timeBtn.innerHTML = `Upgrade Time Lvl ${activeCoin.timeIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
+    } else {
+        timeBtn.innerHTML = `Upgrade Time (MAX LEVEL)`;
     }
 }
 
@@ -145,12 +163,11 @@ function upgradeChance() {
     if (activeCoin.chanceIdx < chanceTiers.length - 1) {
         const cost = chanceCosts[activeCoin.chanceIdx];
         if (balance >= cost) {
-            balance -= cost; // Deduct money
-            activeCoin.chanceIdx++; // Level up
+            balance -= cost; 
+            activeCoin.chanceIdx++; 
             renderCoins(coins, selectedCoinIndex, selectCoin);
             updateSidebar();
         } else {
-            // Flash red if they can't afford it
             const btn = document.getElementById('chanceBtn');
             btn.style.backgroundColor = '#ff4444';
             setTimeout(() => btn.style.backgroundColor = '', 300);
@@ -159,18 +176,36 @@ function upgradeChance() {
 }
 
 function upgradeValue() {
-    if (coins[selectedCoinIndex].valueIdx < valueTiers.length - 1) {
-        coins[selectedCoinIndex].valueIdx++;
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-        updateSidebar();
+    const activeCoin = coins[selectedCoinIndex];
+    if (activeCoin.valueIdx < valueTiers.length - 1) {
+        const cost = valueCosts[activeCoin.valueIdx];
+        if (balance >= cost) {
+            balance -= cost; 
+            activeCoin.valueIdx++; 
+            renderCoins(coins, selectedCoinIndex, selectCoin);
+            updateSidebar();
+        } else {
+            const btn = document.getElementById('valueBtn');
+            btn.style.backgroundColor = '#ff4444';
+            setTimeout(() => btn.style.backgroundColor = '', 300);
+        }
     }
 }
 
 function upgradeTime() {
-    if (coins[selectedCoinIndex].timeIdx < timeTiers.length - 1) {
-        coins[selectedCoinIndex].timeIdx++;
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-        updateSidebar();
+    const activeCoin = coins[selectedCoinIndex];
+    if (activeCoin.timeIdx < timeTiers.length - 1) {
+        const cost = timeCosts[activeCoin.timeIdx];
+        if (balance >= cost) {
+            balance -= cost; 
+            activeCoin.timeIdx++; 
+            renderCoins(coins, selectedCoinIndex, selectCoin);
+            updateSidebar();
+        } else {
+            const btn = document.getElementById('timeBtn');
+            btn.style.backgroundColor = '#ff4444';
+            setTimeout(() => btn.style.backgroundColor = '', 300);
+        }
     }
 }
 
