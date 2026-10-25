@@ -4,7 +4,6 @@ import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts 
 import { setTheme, toggleSettings, saveGame, loadGame } from './settings.js';
 import { renderCoins } from './coin.js';
 
-// Global Game State
 let balance = 0;
 let totalRolls = 0;
 let history = [];
@@ -12,7 +11,6 @@ let coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
 let selectedCoinIndex = 0;
 let isFlipping = false;
 
-// Initialize Game
 function init() {
     const saved = loadGame();
     if (saved) {
@@ -26,25 +24,22 @@ function init() {
     updateSidebar();
 }
 
-// Logic Functions
 function selectCoin(index) {
     if (isFlipping) return;
     selectedCoinIndex = index;
     renderCoins(coins, selectedCoinIndex, selectCoin);
-    updateSidebar(); // This explicitly pulls the unique upgrade costs/levels for the coin you just clicked
+    updateSidebar();
 }
 
 function addNewCoin() {
     if (coins.length < 5) {
         if (balance >= 10000) {
             balance -= 10000;
-            // Pushes a brand new coin with 0 for all upgrade levels
             coins.push({ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 });
-            selectedCoinIndex = coins.length - 1; // Auto-selects the new coin
+            selectedCoinIndex = coins.length - 1;
             renderCoins(coins, selectedCoinIndex, selectCoin);
             updateSidebar();
         } else {
-            // Flash red if they can't afford it
             const btn = document.getElementById('addCoinBtn');
             btn.style.backgroundColor = '#ff4444';
             setTimeout(() => btn.style.backgroundColor = '', 300);
@@ -57,7 +52,6 @@ function updateSidebar() {
     document.getElementById('totalRolls').innerText = totalRolls;
     document.getElementById('selectedCoinHeader').innerText = `Selected: Coin #${selectedCoinIndex + 1}`;
     
-    // Gets the data ONLY for the currently selected coin
     const activeCoin = coins[selectedCoinIndex];
     document.getElementById('chanceDisplay').innerText = chanceTiers[activeCoin.chanceIdx].toFixed(1);
     document.getElementById('valueDisplay').innerText = valueTiers[activeCoin.valueIdx].toFixed(2);
@@ -72,42 +66,28 @@ function updateSidebar() {
         historyContainer.appendChild(div);
     });
 
-    // Update Chance Button Text
     const chanceBtn = document.getElementById('chanceBtn');
     if (activeCoin.chanceIdx < chanceTiers.length - 1) {
         const cost = chanceCosts[activeCoin.chanceIdx];
         chanceBtn.innerHTML = `Chance Lvl ${activeCoin.chanceIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
-        chanceBtn.innerHTML = `Chance (MAX LEVEL)`;
+        chanceBtn.innerHTML = `Chance (MAX)`;
     }
 
-    // Update Value Button Text
     const valueBtn = document.getElementById('valueBtn');
     if (activeCoin.valueIdx < valueTiers.length - 1) {
         const cost = valueCosts[activeCoin.valueIdx];
         valueBtn.innerHTML = `Value Lvl ${activeCoin.valueIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
-        valueBtn.innerHTML = `Value (MAX LEVEL)`;
+        valueBtn.innerHTML = `Value (MAX)`;
     }
 
-    // Update Time Button Text
     const timeBtn = document.getElementById('timeBtn');
     if (activeCoin.timeIdx < timeTiers.length - 1) {
         const cost = timeCosts[activeCoin.timeIdx];
         timeBtn.innerHTML = `Time Lvl ${activeCoin.timeIdx} <span style="color: white;">(</span><span style="color: #4ade80;">$${cost}</span><span style="color: white;">)</span>`;
     } else {
-        timeBtn.innerHTML = `Time (MAX LEVEL)`;
-    }
-    
-    // Add Coin Button updates text/hides at max
-    const addCoinBtn = document.getElementById('addCoinBtn');
-    if (addCoinBtn) {
-        if (coins.length < 5) {
-            addCoinBtn.style.display = 'flex';
-            addCoinBtn.innerHTML = `+ Add Coin <span style="color: white;">(</span><span style="color: #4ade80;">$10000</span><span style="color: white;">)</span>`;
-        } else {
-            addCoinBtn.style.display = 'none';
-        }
+        timeBtn.innerHTML = `Time (MAX)`;
     }
 }
 
@@ -132,24 +112,47 @@ function flipAllCoins() {
 
     coins.forEach((coinData, index) => {
         const domCoin = document.getElementById(`coin-${index}`);
+        const shadow = document.getElementById(`shadow-${index}`);
+        const shineF = document.getElementById(`shine-f-${index}`);
+        const shineB = document.getElementById(`shine-b-${index}`);
+        
         const flipTimeMs = timeTiers[coinData.timeIdx] * 1000;
         if (flipTimeMs > maxTime) maxTime = flipTimeMs;
 
         const chance = chanceTiers[coinData.chanceIdx] / 100;
         const isHeads = Math.random() < chance;
         
-        let nextRotation = coinData.rotation + 1800; // 5 spins
+        let nextRotation = coinData.rotation + 1800; // 5 full spins
         if (isHeads && nextRotation % 360 !== 0) nextRotation += 180;
         if (!isHeads && nextRotation % 360 === 0) nextRotation += 180;
 
+        // Realistic jump and gravity physics
         domCoin.animate([
-            { transform: `translateY(0) rotateX(${coinData.rotation}deg)` },
-            { transform: `translateY(-300px) rotateX(${coinData.rotation + (nextRotation - coinData.rotation)/2}deg)` },
-            { transform: `translateY(0) rotateX(${nextRotation}deg)` }
-        ], { duration: flipTimeMs, easing: 'ease-in-out' });
+            { transform: `translateY(0) rotateX(${coinData.rotation}deg)`, offset: 0, easing: 'ease-out' },
+            { transform: `translateY(-450px) rotateX(${coinData.rotation + (nextRotation - coinData.rotation)/2}deg)`, offset: 0.5, easing: 'ease-in' },
+            { transform: `translateY(0) rotateX(${nextRotation}deg)`, offset: 1 }
+        ], { duration: flipTimeMs, fill: 'forwards' });
+
+        // Shadow shrinks as it goes higher
+        shadow.animate([
+            { transform: `translateX(-50%) scale(1)`, opacity: 0.9, offset: 0, easing: 'ease-out' },
+            { transform: `translateX(-50%) scale(0.2)`, opacity: 0.1, offset: 0.5, easing: 'ease-in' },
+            { transform: `translateX(-50%) scale(1)`, opacity: 0.9, offset: 1 }
+        ], { duration: flipTimeMs });
+
+        // Dynamic light streaking across the metal
+        const spins = (nextRotation - coinData.rotation) / 180;
+        shineF.animate([
+            { backgroundPosition: '200% 200%' },
+            { backgroundPosition: '-100% -100%' }
+        ], { duration: flipTimeMs, iterations: spins });
+
+        shineB.animate([
+            { backgroundPosition: '200% 200%' },
+            { backgroundPosition: '-100% -100%' }
+        ], { duration: flipTimeMs, iterations: spins });
 
         setTimeout(() => {
-            domCoin.style.transform = `rotateX(${nextRotation}deg)`;
             coinData.rotation = nextRotation;
             if (isHeads) {
                 headsCount++;
@@ -160,7 +163,6 @@ function flipAllCoins() {
 
     setTimeout(() => {
         balance += totalEarned;
-        
         if (coins.length === 1) {
             if (headsCount === 1) {
                 addHistory(`Roll ${totalRolls}: Heads (+$${totalEarned.toFixed(2)})`);
@@ -171,7 +173,6 @@ function flipAllCoins() {
             const tailsCount = coins.length - headsCount;
             addHistory(`Roll ${totalRolls}: ${headsCount} Heads, ${tailsCount} Tails (+$${totalEarned.toFixed(2)})`);
         }
-
         btn.style.opacity = '1';
         btn.innerText = 'FLIP';
         isFlipping = false;
@@ -249,7 +250,6 @@ function resetProgress() {
     }
 }
 
-// Make functions available to the HTML buttons
 window.toggleSettings = toggleSettings;
 window.setTheme = setTheme;
 window.addNewCoin = addNewCoin;
@@ -260,5 +260,4 @@ window.upgradeTime = upgradeTime;
 window.saveGame = performSave;
 window.resetProgress = resetProgress;
 
-// Start Game
 init();
