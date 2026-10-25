@@ -31,15 +31,16 @@ function selectCoin(index) {
     if (isFlipping) return;
     selectedCoinIndex = index;
     renderCoins(coins, selectedCoinIndex, selectCoin);
-    updateSidebar();
+    updateSidebar(); // This explicitly pulls the unique upgrade costs/levels for the coin you just clicked
 }
 
 function addNewCoin() {
     if (coins.length < 5) {
         if (balance >= 10000) {
             balance -= 10000;
+            // Pushes a brand new coin with 0 for all upgrade levels
             coins.push({ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 });
-            selectedCoinIndex = coins.length - 1;
+            selectedCoinIndex = coins.length - 1; // Auto-selects the new coin
             renderCoins(coins, selectedCoinIndex, selectCoin);
             updateSidebar();
         } else {
@@ -56,6 +57,7 @@ function updateSidebar() {
     document.getElementById('totalRolls').innerText = totalRolls;
     document.getElementById('selectedCoinHeader').innerText = `Selected: Coin #${selectedCoinIndex + 1}`;
     
+    // Gets the data ONLY for the currently selected coin
     const activeCoin = coins[selectedCoinIndex];
     document.getElementById('chanceDisplay').innerText = chanceTiers[activeCoin.chanceIdx].toFixed(1);
     document.getElementById('valueDisplay').innerText = valueTiers[activeCoin.valueIdx].toFixed(2);
@@ -70,7 +72,7 @@ function updateSidebar() {
         historyContainer.appendChild(div);
     });
 
-    // Update Chance Button Text (removed "Upgrade")
+    // Update Chance Button Text
     const chanceBtn = document.getElementById('chanceBtn');
     if (activeCoin.chanceIdx < chanceTiers.length - 1) {
         const cost = chanceCosts[activeCoin.chanceIdx];
@@ -79,7 +81,7 @@ function updateSidebar() {
         chanceBtn.innerHTML = `Chance (MAX LEVEL)`;
     }
 
-    // Update Value Button Text (removed "Upgrade")
+    // Update Value Button Text
     const valueBtn = document.getElementById('valueBtn');
     if (activeCoin.valueIdx < valueTiers.length - 1) {
         const cost = valueCosts[activeCoin.valueIdx];
@@ -88,7 +90,7 @@ function updateSidebar() {
         valueBtn.innerHTML = `Value (MAX LEVEL)`;
     }
 
-    // Update Time Button Text (removed "Upgrade")
+    // Update Time Button Text
     const timeBtn = document.getElementById('timeBtn');
     if (activeCoin.timeIdx < timeTiers.length - 1) {
         const cost = timeCosts[activeCoin.timeIdx];
