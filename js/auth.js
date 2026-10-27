@@ -9,7 +9,6 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -25,11 +24,13 @@ export function initAuth(onStateChangedCallback) {
         const signInBtn = document.getElementById('googleSignInBtn');
         const userProfile = document.getElementById('userProfile');
         const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
 
         if (user) {
             if (signInBtn) signInBtn.style.display = 'none';
             if (userProfile) userProfile.style.display = 'flex';
             if (userAvatar) userAvatar.src = user.photoURL || '';
+            if (userName) userName.innerText = user.displayName || 'Player';
         } else {
             if (signInBtn) signInBtn.style.display = 'block';
             if (userProfile) userProfile.style.display = 'none';
@@ -83,6 +84,5 @@ export async function loadCloudGame() {
     return null;
 }
 
-// Expose globally for HTML onclick hooks
 window.loginWithGoogle = loginWithGoogle;
 window.logoutGoogle = logoutGoogle;
