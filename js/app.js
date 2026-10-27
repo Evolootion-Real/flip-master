@@ -1,7 +1,6 @@
 import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
-import { setTheme, toggleSettings, saveGame, loadGame } from './settings.js';
+import { setTheme, toggleSettings, saveGame, loadGame, switchUserProfile } from './settings.js';
 import { renderCoins } from './coin.js';
-import { initAuth } from './auth.js';
 
 let balance = 0;
 let totalRolls = 0;
@@ -11,18 +10,20 @@ let selectedCoinIndex = 0;
 let isFlipping = false;
 
 function init() {
-    initAuth(async (user) => {
-        const saved = await loadGame();
-        if (saved) {
-            balance = saved.balance || 0;
-            totalRolls = saved.totalRolls || 0;
-            history = saved.history || [];
-            coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
-            if (saved.theme) setTheme(saved.theme);
-        }
-        renderCoins(coins, selectedCoinIndex, selectCoin);
-        updateSidebar();
-    });
+    const activeUser = localStorage.getItem('coinFlipActiveUser') || 'DefaultPlayer';
+    const usernameInput = document.getElementById('usernameInput');
+    if (usernameInput) usernameInput.value = activeUser;
+
+    const saved = loadGame();
+    if (saved) {
+        balance = saved.balance || 0;
+        totalRolls = saved.totalRolls || 0;
+        history = saved.history || [];
+        coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
+        if (saved.theme) setTheme(saved.theme);
+    }
+    renderCoins(coins, selectedCoinIndex, selectCoin);
+    updateSidebar();
 }
 
 function selectCoin(index) {
@@ -236,7 +237,8 @@ function performSave() {
 
 function resetProgress() {
     if(confirm("Are you sure you want to reset ALL progress? This cannot be undone.")) {
-        localStorage.removeItem('coinFlipMasterSave');
+        const activeUser = localStorage.getItem('coinFlipActiveUser') || 'DefaultPlayer';
+        localStorage.removeItem(`coinFlipMasterSave_${activeUser}`);
         balance = 0;
         totalRolls = 0;
         history = [];
@@ -248,7 +250,13 @@ function resetProgress() {
     }
 }
 
-// Expose functions to the global window scope so HTML inline onclick events work properly
+function handleProfileSwitch() {
+    const input = document.getElementById('usernameInput');
+    if (input && input.value.trim()) {
+        switchUserProfile(input.value.trim());
+    }
+}
+
 window.toggleSettings = toggleSettings;
 window.setTheme = setTheme;
 window.addNewCoin = addNewCoin;
@@ -258,5 +266,6 @@ window.upgradeValue = upgradeValue;
 window.upgradeTime = upgradeTime;
 window.saveGame = performSave;
 window.resetProgress = resetProgress;
+window.handleProfileSwitch = handleProfileSwitch;
 
 init();
