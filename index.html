@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CJ COIN APP</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Supabase JS Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -53,11 +55,13 @@
         <div class="settings-modal" id="settingsModal">
             <h1>Settings & Info</h1>
             
-            <!-- Player Profile Section -->
-            <h2>Player Profile</h2>
-            <div style="margin-bottom: 30px; display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="usernameInput" placeholder="Enter Player Name" style="padding: 10px; border-radius: 8px; border: 1px solid var(--theme); background: rgba(0,0,0,0.2); color: #fff; font-size: 14px; flex: 1;">
-                <button class="save-btn" onclick="handleProfileSwitch()" style="padding: 10px 16px;">Switch Profile</button>
+            <!-- Cloud Google Auth Section -->
+            <h2>Cloud Account</h2>
+            <div style="margin-bottom: 30px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--theme);">
+                <div id="authStatus" style="margin-bottom: 10px; font-size: 14px; color: #fff;">Checking login status...</div>
+                <button id="googleAuthBtn" class="save-btn" onclick="handleAuthAction()" style="width: 100%; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    Sign In with Google
+                </button>
             </div>
 
             <h2>Theme Color</h2>
@@ -76,7 +80,7 @@
                 <button class="reset-btn" onclick="resetProgress()">⚠️ Reset All Progress</button>
             </div>
             
-            <p id="saveMsg" style="color: #2a9d8f; font-weight: bold; display: none;">Game Saved Successfully!</p>
+            <p id="saveMsg" style="color: #2a9d8f; font-weight: bold; display: none;">Game Saved Successfully to Cloud!</p>
 
             <button class="close-settings" onclick="toggleSettings()">Close Settings</button>
         </div>
