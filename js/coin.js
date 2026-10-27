@@ -1,5 +1,3 @@
-// Handles 3D coin mechanics, bold minted H/T typography, and 3D layering
-
 import { valueTiers } from './upgrades.js';
 
 export function getCoinDesigns() {
@@ -17,15 +15,7 @@ export function getCoinDesigns() {
             </defs>
             <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/>
             <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
-            
-            <text x="50" y="68" 
-                  font-size="54" 
-                  font-family="'Montserrat', sans-serif" 
-                  font-weight="900" 
-                  text-anchor="middle" 
-                  fill="rgba(0,0,0,0.8)" 
-                  filter="url(#inset-shadow-h)"
-                  letter-spacing="2">H</text>
+            <text x="50" y="68" font-size="54" font-family="'Montserrat', sans-serif" font-weight="900" text-anchor="middle" fill="rgba(0,0,0,0.8)" filter="url(#inset-shadow-h)" letter-spacing="2">H</text>
         </svg>
     `;
 
@@ -43,15 +33,7 @@ export function getCoinDesigns() {
             </defs>
             <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/>
             <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
-            
-            <text x="50" y="68" 
-                  font-size="54" 
-                  font-family="'Montserrat', sans-serif" 
-                  font-weight="900" 
-                  text-anchor="middle" 
-                  fill="rgba(0,0,0,0.8)" 
-                  filter="url(#inset-shadow-t)"
-                  letter-spacing="2">T</text>
+            <text x="50" y="68" font-size="54" font-family="'Montserrat', sans-serif" font-weight="900" text-anchor="middle" fill="rgba(0,0,0,0.8)" filter="url(#inset-shadow-t)" letter-spacing="2">T</text>
         </svg>
     `;
 
