@@ -1,5 +1,4 @@
-// This file handles the themes, saving, loading, and resetting progress
-import { saveCloudGame, loadCloudGame, loginWithGoogle, logoutGoogle } from './auth.js';
+import { saveCloudGame, loadCloudGame } from './auth.js';
 
 export function setTheme(color) {
     document.documentElement.style.setProperty('--theme', color);
