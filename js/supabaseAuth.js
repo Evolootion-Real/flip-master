@@ -10,7 +10,7 @@ export async function loginWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: window.location.href
+            redirectTo: window.location.origin + window.location.pathname
         }
     });
     if (error) console.error("Login Error:", error);
@@ -22,8 +22,8 @@ export async function logoutUser() {
     location.reload();
 }
 
-// Smart button handler that checks if user is logged in or out
 export async function handleAuthAction() {
+    console.log("Auth button clicked!");
     const { data: { session } } = await supabase.auth.getSession();
     if (session && session.user) {
         await logoutUser();
@@ -87,8 +87,3 @@ export async function checkUserSession() {
         return false;
     }
 }
-
-// Global window mappings so HTML onclick attributes can reach them
-window.loginWithGoogle = loginWithGoogle;
-window.logoutUser = logoutUser;
-window.handleAuthAction = handleAuthAction;
