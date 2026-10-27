@@ -1,3 +1,5 @@
+// js/app.js - Main application file binding modules, game loop, and cloud saves
+
 import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
 import { setTheme, toggleSettings } from './settings.js';
 import { renderCoins } from './coin.js';
@@ -175,6 +177,7 @@ function flipAllCoins() {
         btn.innerText = 'FLIP';
         isFlipping = false;
         renderCoins(coins, selectedCoinIndex, selectCoin);
+        updateSidebar();
     }, maxTime);
 }
 
@@ -252,15 +255,18 @@ async function resetProgress() {
     }
 }
 
+// Smart toggle handler for Google Sign In / Sign Out button
 async function handleAuthAction() {
+    console.log("Auth button clicked!");
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
+    if (session && session.user) {
         await logoutUser();
     } else {
         await loginWithGoogle();
     }
 }
 
+// Exported to window so HTML inline onclick attributes can access them
 window.toggleSettings = toggleSettings;
 window.setTheme = setTheme;
 window.addNewCoin = addNewCoin;
