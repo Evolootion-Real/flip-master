@@ -6,10 +6,11 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export async function loginWithGoogle() {
+    console.log("Attempting Google OAuth login...");
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: window.location.origin + window.location.pathname
+            redirectTo: window.location.href
         }
     });
     if (error) console.error("Login Error:", error);
@@ -23,7 +24,6 @@ export async function logoutUser() {
 export async function saveCloudGame(gameState) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-        // Fallback to local storage if not logged in
         localStorage.setItem('coinFlipGuestSave', JSON.stringify(gameState));
         return;
     }
@@ -38,7 +38,6 @@ export async function saveCloudGame(gameState) {
 export async function loadCloudGame() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-        // Fallback to local storage if not logged in
         const saved = localStorage.getItem('coinFlipGuestSave');
         return saved ? JSON.parse(saved) : null;
     }
@@ -78,6 +77,6 @@ export async function checkUserSession() {
     }
 }
 
-// Global window mappings for buttons in HTML
+// Global window mappings
 window.loginWithGoogle = loginWithGoogle;
 window.logoutUser = logoutUser;
