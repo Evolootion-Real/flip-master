@@ -9,6 +9,7 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
+// Initialize Firebase safely
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -43,9 +44,9 @@ export function initAuth(onStateChangedCallback) {
 }
 
 export async function loginWithGoogle() {
+    console.log("Login with Google clicked...");
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
-        // Switched from signInWithPopup to signInWithRedirect to prevent browser popup blockers from instantly killing the window
         await auth.signInWithRedirect(provider);
     } catch (error) {
         console.error("Google Sign-In Error:", error);
@@ -73,7 +74,6 @@ export async function saveCloudGame(gameState) {
 }
 
 export async function loadCloudGame() {
-    // Check for redirect result when returning from Google login redirect
     try {
         const result = await auth.getRedirectResult();
         if (result && result.user) {
@@ -95,5 +95,6 @@ export async function loadCloudGame() {
     return null;
 }
 
+// Explicitly expose to global window scope so HTML onclick attributes work
 window.loginWithGoogle = loginWithGoogle;
 window.logoutGoogle = logoutGoogle;
