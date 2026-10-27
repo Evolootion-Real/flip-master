@@ -1,6 +1,7 @@
 import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
-import { setTheme, toggleSettings, saveGame, loadGame, switchUserProfile } from './settings.js';
+import { setTheme, toggleSettings } from './settings.js';
 import { renderCoins } from './coin.js';
+import { loginWithGoogle, logoutUser, saveCloudGame, loadCloudGame, checkUserSession } from './supabaseAuth.js';
 
 let balance = 0;
 let totalRolls = 0;
@@ -9,12 +10,10 @@ let coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
 let selectedCoinIndex = 0;
 let isFlipping = false;
 
-function init() {
-    const activeUser = localStorage.getItem('coinFlipActiveUser') || 'DefaultPlayer';
-    const usernameInput = document.getElementById('usernameInput');
-    if (usernameInput) usernameInput.value = activeUser;
+async function init() {
+    await checkUserSession();
 
-    const saved = loadGame();
+    const saved = await loadCloudGame();
     if (saved) {
         balance = saved.balance || 0;
         totalRolls = saved.totalRolls || 0;
@@ -230,30 +229,35 @@ function upgradeTime() {
     }
 }
 
-function performSave() {
+async function performSave() {
     const theme = getComputedStyle(document.documentElement).getPropertyValue('--theme').trim();
-    saveGame({ balance, totalRolls, history, coins, theme });
+    await saveCloudGame({ balance, totalRolls, history, coins, theme });
+    
+    const msg = document.getElementById('saveMsg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
 }
 
-function resetProgress() {
+async function resetProgress() {
     if(confirm("Are you sure you want to reset ALL progress? This cannot be undone.")) {
-        const activeUser = localStorage.getItem('coinFlipActiveUser') || 'DefaultPlayer';
-        localStorage.removeItem(`coinFlipMasterSave_${activeUser}`);
         balance = 0;
         totalRolls = 0;
         history = [];
         coins = [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
         selectedCoinIndex = 0;
+        await performSave();
         renderCoins(coins, selectedCoinIndex, selectCoin);
         updateSidebar();
         toggleSettings();
     }
 }
 
-function handleProfileSwitch() {
-    const input = document.getElementById('usernameInput');
-    if (input && input.value.trim()) {
-        switchUserProfile(input.value.trim());
+async function handleAuthAction() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        await logoutUser();
+    } else {
+        await loginWithGoogle();
     }
 }
 
@@ -266,6 +270,6 @@ window.upgradeValue = upgradeValue;
 window.upgradeTime = upgradeTime;
 window.saveGame = performSave;
 window.resetProgress = resetProgress;
-window.handleProfileSwitch = handleProfileSwitch;
+window.handleAuthAction = handleAuthAction;
 
 init();
