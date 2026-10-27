@@ -1,5 +1,3 @@
-// auth.js - Handles Firebase Google Authentication and Cloud Firestore Synchronization
-
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
