@@ -3,6 +3,7 @@
 import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
 import { setTheme, toggleSettings, saveGame, loadGame } from './settings.js';
 import { renderCoins } from './coin.js';
+import { initAuth } from './auth.js';
 
 let balance = 0;
 let totalRolls = 0;
@@ -12,16 +13,18 @@ let selectedCoinIndex = 0;
 let isFlipping = false;
 
 function init() {
-    const saved = loadGame();
-    if (saved) {
-        balance = saved.balance || 0;
-        totalRolls = saved.totalRolls || 0;
-        history = saved.history || [];
-        coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
-        if (saved.theme) setTheme(saved.theme);
-    }
-    renderCoins(coins, selectedCoinIndex, selectCoin);
-    updateSidebar();
+    initAuth(async (user) => {
+        const saved = await loadGame();
+        if (saved) {
+            balance = saved.balance || 0;
+            totalRolls = saved.totalRolls || 0;
+            history = saved.history || [];
+            coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
+            if (saved.theme) setTheme(saved.theme);
+        }
+        renderCoins(coins, selectedCoinIndex, selectCoin);
+        updateSidebar();
+    });
 }
 
 function selectCoin(index) {
@@ -126,21 +129,18 @@ function flipAllCoins() {
         if (isHeads && nextRotation % 360 !== 0) nextRotation += 180;
         if (!isHeads && nextRotation % 360 === 0) nextRotation += 180;
 
-        // Realistic jump and gravity physics
         domCoin.animate([
             { transform: `translateY(0) rotateX(${coinData.rotation}deg)`, offset: 0, easing: 'ease-out' },
             { transform: `translateY(-450px) rotateX(${coinData.rotation + (nextRotation - coinData.rotation)/2}deg)`, offset: 0.5, easing: 'ease-in' },
             { transform: `translateY(0) rotateX(${nextRotation}deg)`, offset: 1 }
         ], { duration: flipTimeMs, fill: 'forwards' });
 
-        // Shadow shrinks as it goes higher
         shadow.animate([
             { transform: `translateX(-50%) scale(1)`, opacity: 0.9, offset: 0, easing: 'ease-out' },
             { transform: `translateX(-50%) scale(0.2)`, opacity: 0.1, offset: 0.5, easing: 'ease-in' },
             { transform: `translateX(-50%) scale(1)`, opacity: 0.9, offset: 1 }
         ], { duration: flipTimeMs });
 
-        // Dynamic light streaking across the metal
         const spins = (nextRotation - coinData.rotation) / 180;
         shineF.animate([
             { backgroundPosition: '200% 200%' },
