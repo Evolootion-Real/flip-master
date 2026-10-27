@@ -1,0 +1,81 @@
+const SUPABASE_URL = 'YOUR_SUPABASE_URL'; 
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; 
+
+export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+export async function loginWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: window.location.origin + window.location.pathname
+        }
+    });
+    if (error) console.error("Login Error:", error);
+}
+
+export async function logoutUser() {
+    await supabase.auth.signOut();
+    location.reload();
+}
+
+export async function saveCloudGame(gameState) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        // Fallback to local storage if not logged in
+        localStorage.setItem('coinFlipGuestSave', JSON.stringify(gameState));
+        return;
+    }
+
+    const { error } = await supabase
+        .from('player_saves')
+        .upsert({ id: user.id, game_data: gameState, updated_at: new Date() });
+
+    if (error) console.error("Cloud Save Error:", error);
+}
+
+export async function loadCloudGame() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        // Fallback to local storage if not logged in
+        const saved = localStorage.getItem('coinFlipGuestSave');
+        return saved ? JSON.parse(saved) : null;
+    }
+
+    const { data, error } = await supabase
+        .from('player_saves')
+        .select('game_data')
+        .eq('id', user.id)
+        .single();
+
+    if (error && error.code !== 'PGRST116') {
+        console.error("Cloud Load Error:", error);
+        return null;
+    }
+    return data ? data.game_data : null;
+}
+
+export async function checkUserSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    const statusEl = document.getElementById('authStatus');
+    const btnEl = document.getElementById('googleAuthBtn');
+
+    if (session && session.user) {
+        if (statusEl) statusEl.innerText = `Logged in as: ${session.user.email}`;
+        if (btnEl) {
+            btnEl.innerText = 'Sign Out';
+            btnEl.style.backgroundColor = '#e63946';
+        }
+        return true;
+    } else {
+        if (statusEl) statusEl.innerText = 'Not logged in (saving locally)';
+        if (btnEl) {
+            btnEl.innerText = 'Sign In with Google';
+            btnEl.style.backgroundColor = '';
+        }
+        return false;
+    }
+}
+
+// Global window mappings for buttons in HTML
+window.loginWithGoogle = loginWithGoogle;
+window.logoutUser = logoutUser;
