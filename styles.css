@@ -93,7 +93,6 @@ body {
     transform: translateY(-15px) scale(1.05);
 }
 
-/* Dynamic Drop Shadow */
 .coin-shadow {
     position: absolute;
     bottom: -10px;
@@ -110,7 +109,6 @@ body {
     z-index: 5;
 }
 
-/* 3D Thickness Slices */
 .coin-edge {
     position: absolute;
     width: 100%;
@@ -134,7 +132,6 @@ body {
     border: 1px solid rgba(255,255,255,0.15);
 }
 
-/* Solid Metallic Materials (Fixes the see-through bug) */
 .coin-copper {
     background: linear-gradient(135deg, #ffb380 0%, #b87333 40%, #703612 100%);
     border: 2px solid #8b4513;
@@ -150,7 +147,6 @@ body {
     border: 2px solid #b8860b;
 }
 
-/* The Custom SVG Face Restraints */
 .coin-svg {
     position: absolute;
     top: 0;
@@ -160,7 +156,6 @@ body {
     z-index: 2;
 }
 
-/* The Animated Shine Effect */
 .shine {
     position: absolute;
     inset: 0;
@@ -178,7 +173,7 @@ body {
     opacity: 0.8;
 }
 
-/* Next Gen Glassmorphism Sidebar */
+/* Sidebar & Google Button */
 .sidebar {
     position: absolute;
     right: 0;
@@ -208,9 +203,28 @@ body {
 .stats h2 {
     color: #fff;
     margin: 0;
-    font-size: 38px;
+    font-size: 32px;
     font-weight: 900;
     text-shadow: 0 0 20px var(--theme);
+}
+
+.google-btn {
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.google-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
 }
 
 .coin-selector-header {
@@ -252,7 +266,6 @@ body {
     margin-bottom: 25px;
 }
 
-/* Next Gen Buttons */
 .upgrade-btn, .add-coin-btn {
     background: rgba(255,255,255,0.03);
     color: white;
@@ -322,7 +335,7 @@ body {
     border-left: 3px solid var(--theme);
 }
 
-/* Next Gen Flip Button */
+/* Flip Button */
 .btn-wrapper {
     position: absolute;
     bottom: 50px;
@@ -382,10 +395,10 @@ body {
     background: rgba(255,255,255,0.05);
     border: 1px solid var(--glass-border);
     color: #fff;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -434,6 +447,4 @@ body {
 .close-settings {
     margin-top: auto; background: var(--theme); color: var(--theme-text); border: none;
     padding: 20px; font-size: 20px; font-weight: 900; cursor: pointer; border-radius: 12px;
-    transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
 }
-.close-settings:hover { filter: brightness(1.2); }
