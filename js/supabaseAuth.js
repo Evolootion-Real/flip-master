@@ -17,8 +17,19 @@ export async function loginWithGoogle() {
 }
 
 export async function logoutUser() {
+    console.log("Signing out...");
     await supabase.auth.signOut();
     location.reload();
+}
+
+// Smart button handler that checks if user is logged in or out
+export async function handleAuthAction() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.user) {
+        await logoutUser();
+    } else {
+        await loginWithGoogle();
+    }
 }
 
 export async function saveCloudGame(gameState) {
@@ -77,6 +88,7 @@ export async function checkUserSession() {
     }
 }
 
-// Global window mappings
+// Global window mappings so HTML onclick attributes can reach them
 window.loginWithGoogle = loginWithGoogle;
 window.logoutUser = logoutUser;
+window.handleAuthAction = handleAuthAction;
