@@ -1,5 +1,3 @@
-// This is the main application file that ties all modules together
-
 import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
 import { setTheme, toggleSettings, saveGame, loadGame } from './settings.js';
 import { renderCoins } from './coin.js';
@@ -125,7 +123,7 @@ function flipAllCoins() {
         const chance = chanceTiers[coinData.chanceIdx] / 100;
         const isHeads = Math.random() < chance;
         
-        let nextRotation = coinData.rotation + 1800; // 5 full spins
+        let nextRotation = coinData.rotation + 1800;
         if (isHeads && nextRotation % 360 !== 0) nextRotation += 180;
         if (!isHeads && nextRotation % 360 === 0) nextRotation += 180;
 
@@ -250,6 +248,7 @@ function resetProgress() {
     }
 }
 
+// Expose functions to the global window scope so HTML inline onclick events work properly
 window.toggleSettings = toggleSettings;
 window.setTheme = setTheme;
 window.addNewCoin = addNewCoin;
