@@ -1,3 +1,5 @@
+// auth.js - Handles Firebase Google Authentication and Cloud Firestore Synchronization
+
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -43,7 +45,8 @@ export function initAuth(onStateChangedCallback) {
 export async function loginWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
-        await auth.signInWithPopup(provider);
+        // Switched from signInWithPopup to signInWithRedirect to prevent browser popup blockers from instantly killing the window
+        await auth.signInWithRedirect(provider);
     } catch (error) {
         console.error("Google Sign-In Error:", error);
     }
@@ -70,6 +73,16 @@ export async function saveCloudGame(gameState) {
 }
 
 export async function loadCloudGame() {
+    // Check for redirect result when returning from Google login redirect
+    try {
+        const result = await auth.getRedirectResult();
+        if (result && result.user) {
+            currentUser = result.user;
+        }
+    } catch (error) {
+        console.error("Redirect Result Error:", error);
+    }
+
     if (!currentUser) return null;
     try {
         const doc = await db.collection('users').doc(currentUser.uid).get();
