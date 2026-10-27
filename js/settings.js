@@ -1,4 +1,5 @@
 // This file handles the themes, saving, loading, and resetting progress
+import { saveCloudGame, loadCloudGame, loginWithGoogle, logoutGoogle } from './auth.js';
 
 export function setTheme(color) {
     document.documentElement.style.setProperty('--theme', color);
@@ -10,14 +11,26 @@ export function toggleSettings() {
     document.getElementById('saveMsg').style.display = 'none';
 }
 
-export function saveGame(gameState) {
+export async function saveGame(gameState) {
+    // Save locally
     localStorage.setItem('coinFlipMasterSave', JSON.stringify(gameState));
+    
+    // Save to cloud if logged in
+    await saveCloudGame(gameState);
+
     const msg = document.getElementById('saveMsg');
     msg.style.display = 'block';
     setTimeout(() => msg.style.display = 'none', 3000);
 }
 
-export function loadGame() {
+export async function loadGame() {
+    // Try loading from cloud if user is authenticated
+    const cloudData = await loadCloudGame();
+    if (cloudData) {
+        return cloudData;
+    }
+
+    // Fallback to local storage
     const saved = localStorage.getItem('coinFlipMasterSave');
     if (saved) {
         return JSON.parse(saved);
