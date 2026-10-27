@@ -12,10 +12,7 @@ export function toggleSettings() {
 }
 
 export async function saveGame(gameState) {
-    // Save locally
     localStorage.setItem('coinFlipMasterSave', JSON.stringify(gameState));
-    
-    // Save to cloud if logged in
     await saveCloudGame(gameState);
 
     const msg = document.getElementById('saveMsg');
@@ -24,13 +21,11 @@ export async function saveGame(gameState) {
 }
 
 export async function loadGame() {
-    // Try loading from cloud if user is authenticated
     const cloudData = await loadCloudGame();
     if (cloudData) {
         return cloudData;
     }
 
-    // Fallback to local storage
     const saved = localStorage.getItem('coinFlipMasterSave');
     if (saved) {
         return JSON.parse(saved);
