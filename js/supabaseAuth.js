@@ -1,100 +1,125 @@
 // js/supabaseAuth.js
 
-const SUPABASE_URL = 'https://ipnmqyzdflycojqjspui.supabase.co'; 
+const SUPABASE_URL = 'https://ipnmqyzdflycoqjispui.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlwbm1xeXpkZmx5Y29xamlzcHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxMzQzNTYsImV4cCI6MjEwODcxMDM1Nn0.0OiiBTYzPgMfo99YHCkCFhS6OfCprIdSCnfuyMf72-M'; 
 
 export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export async function loginWithGoogle() {
     console.log("Attempting Google OAuth login...");
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: window.location.origin + window.location.pathname
-        }
-    });
-    if (error) console.error("Login Error:", error);
+    try {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+        if (error) console.error("Login Error:", error);
+    } catch (err) {
+        console.error("OAuth Exception:", err);
+    }
 }
 
 export async function logoutUser() {
     console.log("Signing out...");
-    await supabase.auth.signOut();
+    try {
+        await supabase.auth.signOut();
+    } catch (err) {
+        console.error("SignOut Exception:", err);
+    }
     location.reload();
 }
 
 export async function handleAuthAction() {
     console.log("Auth button clicked!");
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) {
-        await logoutUser();
-    } else {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user) {
+            await logoutUser();
+        } else {
+            await loginWithGoogle();
+        }
+    } catch (err) {
+        console.error("Auth Action Error:", err);
         await loginWithGoogle();
     }
 }
 
 export async function saveCloudGame(gameState) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            localStorage.setItem('coinFlipGuestSave', JSON.stringify(gameState));
+            return;
+        }
+
+        const { error } = await supabase
+            .from('player_saves')
+            .upsert({ id: user.id, game_data: gameState, updated_at: new Date() });
+
+        if (error) console.error("Cloud Save Error:", error);
+    } catch (err) {
+        console.error("Save Exception:", err);
         localStorage.setItem('coinFlipGuestSave', JSON.stringify(gameState));
-        return;
     }
-
-    const { error } = await supabase
-        .from('player_saves')
-        .upsert({ id: user.id, game_data: gameState, updated_at: new Date() });
-
-    if (error) console.error("Cloud Save Error:", error);
 }
 
 export async function loadCloudGame() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            const saved = localStorage.getItem('coinFlipGuestSave');
+            return saved ? JSON.parse(saved) : null;
+        }
+
+        const { data, error } = await supabase
+            .from('player_saves')
+            .select('game_data')
+            .eq('id', user.id)
+            .single();
+
+        if (error) {
+            if (error.code !== 'PGRST116') {
+                console.error("Cloud Load Error:", error);
+            }
+            return null;
+        }
+        return data ? data.game_data : null;
+    } catch (err) {
+        console.error("Load Exception:", err);
         const saved = localStorage.getItem('coinFlipGuestSave');
         return saved ? JSON.parse(saved) : null;
     }
-
-    const { data, error } = await supabase
-        .from('player_saves')
-        .select('game_data')
-        .eq('id', user.id)
-        .single();
-
-    if (error && error.code !== 'PGRST116') {
-        console.error("Cloud Load Error:", error);
-        return null;
-    }
-    return data ? data.game_data : null;
 }
 
 export async function checkUserSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    const statusEl = document.getElementById('authStatus');
-    const btnEl = document.getElementById('googleAuthBtn');
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const statusEl = document.getElementById('authStatus');
+        const btnEl = document.getElementById('googleAuthBtn');
 
-    if (session && session.user) {
-        if (statusEl) statusEl.innerText = `Logged in as: ${session.user.email}`;
-        if (btnEl) {
-            btnEl.innerText = 'Sign Out';
-            btnEl.style.backgroundColor = '#e63946';
+        if (session && session.user) {
+            if (statusEl) statusEl.innerText = `Logged in as: ${session.user.email}`;
+            if (btnEl) {
+                btnEl.innerText = 'Sign Out';
+                btnEl.style.backgroundColor = '#e63946';
+            }
+            return true;
+        } else {
+            if (statusEl) statusEl.innerText = 'Not logged in (saving locally)';
+            if (btnEl) {
+                btnEl.innerText = 'Sign In with Google';
+                btnEl.style.backgroundColor = '';
+            }
+            return false;
         }
-        return true;
-    } else {
-        if (statusEl) statusEl.innerText = 'Not logged in (saving locally)';
-        if (btnEl) {
-            btnEl.innerText = 'Sign In with Google';
-            btnEl.style.backgroundColor = '';
-        }
+    } catch (err) {
+        console.error("Session Check Error:", err);
         return false;
     }
 }
 
-// Global window mappings so HTML inline onclick attributes can reach them[cite: 5]
+// Global window mappings
 window.loginWithGoogle = loginWithGoogle;
 window.logoutUser = logoutUser;
 window.handleAuthAction = handleAuthAction;
-```[cite: 5]
-
-### Next Steps:
-1. Replace your **`js/supabaseAuth.js`** file with the code above[cite: 5].
-2. Double-check that your Supabase Dashboard has **`[https://evolootion-real.github.io/flip-master/](https://evolootion-real.github.io/flip-master/)`** added under **Authentication ➔ URL Configuration** for both **Site URL** and **Redirect URLs**.
-3. Hard-refresh your live site (`Ctrl + F5` or `Cmd + Shift + R`), open your browser console (`F12`), and click **Sign In with Google**!
