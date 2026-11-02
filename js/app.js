@@ -13,18 +13,23 @@ let selectedCoinIndex = 0;
 let isFlipping = false;
 
 async function init() {
-    await checkUserSession();
-
-    const saved = await loadCloudGame();
-    if (saved) {
-        balance = saved.balance || 0;
-        totalRolls = saved.totalRolls || 0;
-        history = saved.history || [];
-        coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
-        if (saved.theme) setTheme(saved.theme);
+    try {
+        await checkUserSession();
+        const saved = await loadCloudGame();
+        if (saved) {
+            balance = saved.balance || 0;
+            totalRolls = saved.totalRolls || 0;
+            history = saved.history || [];
+            coins = saved.coins || [{ chanceIdx: 0, valueIdx: 0, timeIdx: 0, rotation: 0 }];
+            if (saved.theme) setTheme(saved.theme);
+        }
+    } catch (err) {
+        console.error("Initialization error, using default state:", err);
+    } finally {
+        // Guaranteed to execute so coins render and buttons work even if cloud fails
+        renderCoins(coins, selectedCoinIndex, selectCoin);
+        updateSidebar();
     }
-    renderCoins(coins, selectedCoinIndex, selectCoin);
-    updateSidebar();
 }
 
 function selectCoin(index) {
