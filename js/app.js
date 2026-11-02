@@ -3,7 +3,7 @@
 import { chanceTiers, chanceCosts, valueTiers, valueCosts, timeTiers, timeCosts } from './upgrades.js';
 import { setTheme, toggleSettings } from './settings.js';
 import { renderCoins } from './coin.js';
-import { loginWithGoogle, logoutUser, saveCloudGame, loadCloudGame, checkUserSession } from './supabaseAuth.js';
+import { loginWithGoogle, logoutUser, saveCloudGame, loadCloudGame, checkUserSession, handleAuthAction } from './supabaseAuth.js';
 
 let balance = 0;
 let totalRolls = 0;
@@ -252,17 +252,6 @@ async function resetProgress() {
         renderCoins(coins, selectedCoinIndex, selectCoin);
         updateSidebar();
         toggleSettings();
-    }
-}
-
-// Smart toggle handler for Google Sign In / Sign Out button
-async function handleAuthAction() {
-    console.log("Auth button clicked!");
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) {
-        await logoutUser();
-    } else {
-        await loginWithGoogle();
     }
 }
 
