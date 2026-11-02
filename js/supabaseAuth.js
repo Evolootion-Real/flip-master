@@ -87,3 +87,8 @@ export async function checkUserSession() {
         return false;
     }
 }
+
+// Global window mappings so HTML inline onclick attributes can reach them[cite: 1]
+window.loginWithGoogle = loginWithGoogle;
+window.logoutUser = logoutUser;
+window.handleAuthAction = handleAuthAction;
