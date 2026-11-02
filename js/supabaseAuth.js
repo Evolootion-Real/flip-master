@@ -88,7 +88,13 @@ export async function checkUserSession() {
     }
 }
 
-// Global window mappings so HTML inline onclick attributes can reach them[cite: 1]
+// Global window mappings so HTML inline onclick attributes can reach them[cite: 5]
 window.loginWithGoogle = loginWithGoogle;
 window.logoutUser = logoutUser;
 window.handleAuthAction = handleAuthAction;
+```[cite: 5]
+
+### Next Steps:
+1. Replace your **`js/supabaseAuth.js`** file with the code above[cite: 5].
+2. Double-check that your Supabase Dashboard has **`[https://evolootion-real.github.io/flip-master/](https://evolootion-real.github.io/flip-master/)`** added under **Authentication ➔ URL Configuration** for both **Site URL** and **Redirect URLs**.
+3. Hard-refresh your live site (`Ctrl + F5` or `Cmd + Shift + R`), open your browser console (`F12`), and click **Sign In with Google**!
